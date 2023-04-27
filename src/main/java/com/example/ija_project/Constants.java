@@ -1,5 +1,5 @@
 package com.example.ija_project;
 
 public class Constants {
-    public static final int FieldPixelsNum = 11;
+    public static final int FieldPixelsNum = 21;
 }
