@@ -3,6 +3,12 @@ module com.example.ija_project {
     requires javafx.fxml;
 
 
-    opens com.example.ija_project to javafx.fxml;
-    exports com.example.ija_project;
+    opens Game to javafx.fxml;
+    exports Game;
+    exports ConstantsEnums;
+    opens ConstantsEnums to javafx.fxml;
+    exports Game.Views;
+    opens Game.Views to javafx.fxml;
+    exports Game.Objects;
+    opens Game.Objects to javafx.fxml;
 }

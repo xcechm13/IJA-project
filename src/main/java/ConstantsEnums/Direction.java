@@ -1,4 +1,4 @@
-package com.example.ija_project;
+package ConstantsEnums;
 
 public enum Direction {
     Up,

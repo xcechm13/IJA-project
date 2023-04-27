@@ -1,4 +1,7 @@
-package com.example.ija_project;
+package ConstantsEnums;
+
+import ConstantsEnums.Constants;
+import ConstantsEnums.FieldNeighbour;
 
 public class FieldPixels {
     public static boolean[][] CreateField (FieldNeighbour fieldNeighbour)
