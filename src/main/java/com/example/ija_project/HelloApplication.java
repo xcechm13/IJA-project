@@ -2,29 +2,31 @@ package com.example.ija_project;
 
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
-import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
-import static java.lang.Math.decrementExact;
+import static java.lang.Math.addExact;
 import static java.lang.Math.min;
 
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
+
+        GhostView gw = new GhostView();
+        GhostObject go = new GhostObject(gw);
+        gw.addObserver(go);
+        gw.setZprava("ahoj");
+
+
 
         int rows = 15;
         int cols = 30;
@@ -184,16 +186,21 @@ public class HelloApplication extends Application {
         });
 
 
-
-
-
-
+        Label label = new Label("ahoj");
+        label.setPrefWidth(100);
+        label.setPrefHeight(50);
+        label.setStyle("-fx-background-color: #FF0000;");
+        VBox vBox = new VBox();
+        vBox.setStyle("-fx-background-color: #00FF00;");
+        vBox.getChildren().add(label);
+        vBox.getChildren().add(GridPane);
 
 
 
 
         StackPane root = new StackPane();
-        root.getChildren().add(GridPane);
+        root.getChildren().add(vBox);
+        //root.getChildren().add(GridPane);
 
         Scene scene = new Scene(root, 1000, 600);
         scene.setUserAgentStylesheet(getClass().getResource("style.css").toExternalForm());

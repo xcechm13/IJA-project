@@ -1,5 +1,25 @@
 package com.example.ija_project;
 
-public class Podrazena {
-    Podrazena podrazena = new Podrazena();
+import java.util.Observable;
+
+public class GhostView extends Observable {
+
+    private String zprava;
+
+    public GhostView()
+    {
+
+    }
+
+    public String getZprava()
+    {
+        return zprava;
+    }
+
+    public void setZprava(String zprava)
+    {
+        this.zprava = zprava;
+        setChanged();
+        notifyObservers(zprava);
+    }
 }
