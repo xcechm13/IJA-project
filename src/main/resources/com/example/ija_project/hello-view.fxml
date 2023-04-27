@@ -3,14 +3,267 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
-
 <?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.ija_project.HelloController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.RowConstraints?>
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.example.ija_project.HelloController"
+      stylesheets="@style.css">
+
+
+
+
+    <GridPane styleClass="gridPane" vgap="0" prefHeight="10000">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="8.333"/>
+            <ColumnConstraints percentWidth="8.333"/>
+            <ColumnConstraints percentWidth="8.333"/>
+            <ColumnConstraints percentWidth="8.333"/>
+            <ColumnConstraints percentWidth="8.333"/>
+            <ColumnConstraints percentWidth="8.333"/>
+            <ColumnConstraints percentWidth="8.333"/>
+            <ColumnConstraints percentWidth="8.333"/>
+            <ColumnConstraints percentWidth="8.333"/>
+            <ColumnConstraints percentWidth="8.333"/>
+            <ColumnConstraints percentWidth="8.333"/>
+            <ColumnConstraints percentWidth="8.333"/>
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints percentHeight="25.0"/>
+            <RowConstraints percentHeight="25.0"/>
+            <RowConstraints percentHeight="25.0"/>
+            <RowConstraints percentHeight="25.0"/>
+        </rowConstraints>
+
+        <VBox GridPane.rowIndex="0" GridPane.columnIndex="0" alignment="CENTER">
+            <GridPane prefHeight="10000" prefWidth="10000">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                </rowConstraints>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+            </GridPane>
+        </VBox>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.columnIndex="2" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.columnIndex="3" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.columnIndex="4" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.columnIndex="5" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.columnIndex="6" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.columnIndex="7" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.columnIndex="8" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.columnIndex="9" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.columnIndex="10" styleClass="label" text="A"/>
+        <VBox GridPane.rowIndex="0" GridPane.columnIndex="11" alignment="CENTER">
+            <GridPane prefHeight="10000" prefWidth="10000">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                </rowConstraints>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+            </GridPane>
+        </VBox>
+
+        <VBox GridPane.rowIndex="1" GridPane.columnIndex="0" alignment="CENTER">
+            <GridPane prefHeight="10000" prefWidth="10000">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                </rowConstraints>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <VBox GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+            </GridPane>
+        </VBox>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.columnIndex="2" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.columnIndex="3" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.columnIndex="4" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.columnIndex="5" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.columnIndex="6" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.columnIndex="7" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.columnIndex="8" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.columnIndex="9" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.columnIndex="10" styleClass="label" text="A"/>
+        <VBox GridPane.rowIndex="1" GridPane.columnIndex="11" alignment="CENTER">
+            <GridPane prefHeight="10000" prefWidth="10000">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                </rowConstraints>
+                <VBox GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+            </GridPane>
+        </VBox>
+
+        <VBox GridPane.rowIndex="2" GridPane.columnIndex="0" alignment="CENTER">
+            <GridPane prefHeight="10000" prefWidth="10000">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                </rowConstraints>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <VBox GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+            </GridPane>
+        </VBox>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.columnIndex="2" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.columnIndex="3" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.columnIndex="4" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.columnIndex="5" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.columnIndex="6" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.columnIndex="7" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.columnIndex="8" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.columnIndex="9" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.columnIndex="10" styleClass="label" text="A"/>
+        <VBox GridPane.rowIndex="2" GridPane.columnIndex="11" alignment="CENTER">
+            <GridPane prefHeight="10000" prefWidth="10000">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                </rowConstraints>
+                <VBox GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+            </GridPane>
+        </VBox>
+
+        <VBox GridPane.rowIndex="3" GridPane.columnIndex="0" alignment="CENTER">
+            <GridPane prefHeight="10000" prefWidth="10000">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                </rowConstraints>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <VBox GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+            </GridPane>
+        </VBox>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.columnIndex="2" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.columnIndex="3" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.columnIndex="4" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.columnIndex="5" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.columnIndex="6" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.columnIndex="7" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.columnIndex="8" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.columnIndex="9" styleClass="label" text="A"/>
+        <Label GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.columnIndex="10" styleClass="label" text="A"/>
+        <VBox GridPane.rowIndex="3" GridPane.columnIndex="11" alignment="CENTER">
+            <GridPane prefHeight="10000" prefWidth="10000">
+                <columnConstraints>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                    <ColumnConstraints percentWidth="33.333"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                    <RowConstraints percentHeight="33.333"/>
+                </rowConstraints>
+                <VBox GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <VBox GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <VBox styleClass="vboxBlue" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+            </GridPane>
+        </VBox>
+    </GridPane>
+
 </VBox>

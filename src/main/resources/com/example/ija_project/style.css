@@ -1,0 +1,36 @@
+.label
+{
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #51F57A;
+    -fx-font-size: 15px;
+}
+
+.gridPane
+{
+    -fx-background-color: #000000;
+}
+
+.vBox
+{
+    -fx-background-color: #555555;
+}
+
+.vboxRed
+{
+    -fx-background-color: #FF0000;
+}
+
+.vboxGreen
+{
+    -fx-background-color: #00FF00;
+}
+
+.vboxBlue
+{
+    -fx-background-color: #5657ff;
+}
+
+.vboxWhite
+{
+    -fx-background-color: #FFFFFF;
+}
