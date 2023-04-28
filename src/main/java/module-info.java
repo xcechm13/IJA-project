@@ -11,4 +11,6 @@ module com.example.ija_project {
     opens Game.Views to javafx.fxml;
     exports Game.Objects;
     opens Game.Objects to javafx.fxml;
+    exports Game.Records;
+    opens Game.Records to javafx.fxml;
 }

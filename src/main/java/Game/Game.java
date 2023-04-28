@@ -3,11 +3,11 @@ package Game;
 import ConstantsEnums.Constants;
 import ConstantsEnums.FieldNeighbour;
 import ConstantsEnums.FieldPixels;
-import javafx.animation.TranslateTransition;
+import ConstantsEnums.MazeObject;
+import Game.Records.MapParserResult;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -16,173 +16,48 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Duration;
+
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import static java.lang.Math.min;
 
 public class Game extends Application {
 
+    private static MapParser mapParser;
+    private static Stage stage;
+    private static StackPane root;
+    private static GridPane gameGridPane;
+    private static double CommonObjectSize;
+
     @Override
     public void start(Stage stage) throws IOException
     {
-        stage.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number oldWidth, Number newWidth) {
-                // TODO reakce na změnu šířky okna
-                System.out.println("Nová šířka okna: " + newWidth);
-            }
+        Game.stage = stage;
+        stage.widthProperty().addListener((observableValue, oldWidth, newWidth) -> {
+            // TODO reakce na změnu šířky okna
+            System.out.println("Nová šířka okna: " + newWidth);
         });
-
-        stage.heightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observableValue, Number oldHeight, Number newHeight) {
-                // TODO reakce na změnu výšky okna
-                System.out.println("Nová výška okna: " + newHeight);
-            }
+        stage.heightProperty().addListener((observableValue, oldHeight, newHeight) -> {
+            // TODO reakce na změnu výšky okna
+            System.out.println("Nová výška okna: " + newHeight);
         });
-
-        int rows = 15;
-        int cols = 30;
-        var fields = new String[][] {
-                {"X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X"},
-                {"X","S",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".","X"},
-                {"X",".","X","X","X","X","X","X",".","X",".","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X",".","X"},
-                {"X",".","X",".",".",".",".","X",".","X",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".",".","X"},
-                {"X",".","X",".","X","X",".","X",".","X",".","X","X","X","X",".","X","X","X","X","X","X","X","X","X","X","X",".",".","X"},
-                {"X",".","X",".",".","X",".","X",".","X",".",".",".","X",".","X",".",".",".",".",".",".",".",".",".",".",".",".",".","X"},
-                {"X",".","X",".",".","X",".","X",".","X","X","X",".","X",".","X",".","X","X","X","X","X","X","X","X","X","X",".",".","X"},
-                {"X",".","X",".",".","X",".","X",".",".",".","X",".","X",".","X",".","X",".",".",".",".",".",".",".",".",".",".",".","X"},
-                {"X",".","X","X","X","X",".","X","X","X",".","X",".","X",".","X",".","X",".","X","X","X","X","X","X","X","X",".",".","X"},
-                {"X",".",".",".",".",".",".",".",".",".",".","X",".","X",".","X",".","X",".",".",".",".",".",".",".",".",".",".",".","X"},
-                {"X",".","X","X","X","X","X","X","X","X",".","X",".","X",".","X",".","X",".","X","X","X","X","X","X","X","X",".",".","X"},
-                {"X",".",".",".",".",".",".",".",".",".",".","X",".","X",".","X",".","X",".",".",".",".",".",".",".",".",".",".",".","X"},
-                {"X",".","X","X","X","X",".","X","X","X",".","X",".","X",".","X",".","X",".","X","X","X","X","X","X","X",".","X",".","X"},
-                {"X",".","X",".",".","X",".",".",".",".",".","X",".","X",".","X",".","X",".",".",".",".",".",".",".",".",".",".",".","X"},
-                {"X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X","X"}};
-
-        var GridPane = GetGameGridPane(100.0, 100.0, rows, cols, fields);
-
-        var smaller = min(Constants.WindowWidth / cols, Constants.WindowHeight / rows);
-
-        Image image = new Image(new FileInputStream("C:\\Users\\Roman Čechmánek\\Desktop\\pacman.gif"));
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(smaller);
-        imageView.setFitHeight(smaller);
-        GridPane.getChildren().add(imageView);
-        GridPane.setRowIndex(imageView, 1);
-        GridPane.setColumnIndex(imageView, 2);
-
-
-        TranslateTransition transition = new TranslateTransition(Duration.seconds(1), imageView);
-        imageView.setOnMouseClicked(e -> transition.play());
-        transition.setOnFinished(e -> {
-            System.out.println(stage.getWidth() / cols);
-            GridPane.setRowIndex(imageView, 1);
-            GridPane.setColumnIndex(imageView, 3);
-            imageView.setTranslateX(0);
-        });
-
-
-        VBox vBox = new VBox();
-        vBox.setStyle("-fx-background-color: #FFFFFF;");
-
-        /************************************************************************************************************/
-
-
-        GridPane newGridPane = CreateGridPane(100.0, 100.0, 2, 2);
-        newGridPane.setHgap(10);
-        newGridPane.setVgap(10);
-
-        VBox vBox1 = new VBox();
-        vBox1.getChildren().add(GetGameGridPane(100.0, 100.0, rows, cols, fields));
-        vBox1.setOnMouseEntered(e -> MapMouseEntered(vBox1));
-        vBox1.setOnMouseClicked(e -> LoadGame(1));
-
-        VBox vBox2 = new VBox();
-        vBox2.getChildren().add(GetGameGridPane(100.0, 100.0, rows, cols, fields));
-        vBox2.setOnMouseEntered(e -> MapMouseEntered(vBox2));
-        vBox2.setOnMouseClicked(e -> LoadGame(2));
-
-        VBox vBox3 = new VBox();
-        vBox3.getChildren().add(GetGameGridPane(100.0, 100.0, rows, cols, fields));
-        vBox3.setOnMouseEntered(e -> MapMouseEntered(vBox3));
-        vBox3.setOnMouseClicked(e -> LoadGame(3));
-
-        VBox vBox4 = new VBox();
-        vBox4.getChildren().add(GetGameGridPane(100.0, 100.0, rows, cols, fields));
-        vBox4.setOnMouseEntered(e -> MapMouseEntered(vBox4));
-        vBox4.setOnMouseClicked(e -> LoadGame(4));
-
-        newGridPane.getChildren().add(vBox1);
-        newGridPane.setRowIndex(vBox1, 0);
-        newGridPane.setColumnIndex(vBox1, 0);
-
-        newGridPane.getChildren().add(vBox2);
-        newGridPane.setRowIndex(vBox2, 0);
-        newGridPane.setColumnIndex(vBox2, 1);
-
-        newGridPane.getChildren().add(vBox3);
-        newGridPane.setRowIndex(vBox3, 1);
-        newGridPane.setColumnIndex(vBox3, 0);
-
-        newGridPane.getChildren().add(vBox4);
-        newGridPane.setRowIndex(vBox4, 1);
-        newGridPane.setColumnIndex(vBox4, 1);
-
-
-        /************************************************************************************************************/
-
-
-        var menuGridPane = CreateGridPane(100.0, 100.0, 1, 2);
-
-        var LabelMenuLeft = new Label("SELECT MAP");
-        LabelMenuLeft.setStyle("-fx-background-color: #000000;");
-        LabelMenuLeft.setFont(new Font(30));
-        menuGridPane.getChildren().add(LabelMenuLeft);
-        menuGridPane.setRowIndex(LabelMenuLeft, 0);
-        menuGridPane.setColumnIndex(LabelMenuLeft, 0);
-        menuGridPane.setHalignment(LabelMenuLeft, HPos.LEFT);
-
-        var LabelMenuRight = new Label("REPLAY LAST GAME");
-        LabelMenuRight.setStyle("-fx-background-color: #000000;");
-        LabelMenuRight.setFont(new Font(20));
-        LabelMenuRight.setOnMouseEntered(e -> ReplayEntered(LabelMenuRight));
-        LabelMenuRight.setOnMouseClicked(e -> LoadReplay());
-        menuGridPane.getChildren().add(LabelMenuRight);
-        menuGridPane.setRowIndex(LabelMenuRight, 0);
-        menuGridPane.setColumnIndex(LabelMenuRight, 1);
-        menuGridPane.setHalignment(LabelMenuRight, HPos.RIGHT);
-
-        var menuLayoutGridPane = CreteMenuGridPane();
-        menuLayoutGridPane.getChildren().add(menuGridPane);
-        menuLayoutGridPane.setRowIndex(menuGridPane, 0);
-        menuLayoutGridPane.setColumnIndex(menuGridPane, 0);
-        menuLayoutGridPane.getChildren().add(newGridPane);
-        menuLayoutGridPane.setRowIndex(newGridPane, 1);
-        menuLayoutGridPane.setColumnIndex(newGridPane, 0);
-
-
-
-        //vBox.getChildren().add(menuLayoutGridPane);  // odkomentovat pro menu výběr mapy a zakomentovat další příkaz
-        vBox.getChildren().add(GridPane); // zakomentovat pro menu výběr mapy a odkomentovat předchozí příkaz
-
-
 
         StackPane root = new StackPane();
-        root.getChildren().add(GridPane);
-        //root.setStyle("-fx-background-color: #000000;");
-        //root.setPadding(new Insets(0,10,10,10));
+        Game.root = root;
+        root.setStyle("-fx-background-color: #000000;");
+        root.setPadding(new Insets(0,10,10,10));
 
         Scene scene = new Scene(root, Constants.WindowWidth, Constants.WindowHeight);
         scene.setUserAgentStylesheet(getClass().getResource("style.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("PACMAN");
         stage.show();
-        transition.setToX(stage.getWidth() / cols);
+        OpenGame(0);
     }
 
     public static void main(String[] args) {
+        mapParser = new MapParser();
         launch();
     }
 
@@ -424,5 +299,160 @@ public class Game extends Application {
     {
         // TODO
         throw new UnsupportedOperationException();
+    }
+
+    private void OpenMenu()
+    {
+        root.getChildren().removeAll();
+
+        VBox vBox = new VBox();
+        MapParserResult mapParserResult;
+        vBox.setStyle("-fx-background-color: #FFFFFF;");
+
+        GridPane newGridPane = CreateGridPane(100.0, 100.0, 2, 2);
+        newGridPane.setHgap(10);
+        newGridPane.setVgap(10);
+
+        VBox vBox1 = new VBox();
+        mapParserResult = mapParser.getMap(0);
+        vBox1.getChildren().add(GetGameGridPane(100.0, 100.0, mapParserResult.rows(), mapParserResult.cols(), mapParserResult.fields()));
+        vBox1.setOnMouseEntered(e -> MapMouseEntered(vBox1));
+        vBox1.setOnMouseClicked(e -> LoadGame(0));
+
+        VBox vBox2 = new VBox();
+        mapParserResult = mapParser.getMap(1);
+        vBox2.getChildren().add(GetGameGridPane(100.0, 100.0, mapParserResult.rows(), mapParserResult.cols(), mapParserResult.fields()));
+        vBox2.setOnMouseEntered(e -> MapMouseEntered(vBox2));
+        vBox2.setOnMouseClicked(e -> LoadGame(1));
+
+        VBox vBox3 = new VBox();
+        mapParserResult = mapParser.getMap(2);
+        vBox3.getChildren().add(GetGameGridPane(100.0, 100.0, mapParserResult.rows(), mapParserResult.cols(), mapParserResult.fields()));
+        vBox3.setOnMouseEntered(e -> MapMouseEntered(vBox3));
+        vBox3.setOnMouseClicked(e -> LoadGame(2));
+
+        VBox vBox4 = new VBox();
+        mapParserResult = mapParser.getMap(3);
+        vBox4.getChildren().add(GetGameGridPane(100.0, 100.0, mapParserResult.rows(), mapParserResult.cols(), mapParserResult.fields()));
+        vBox4.setOnMouseEntered(e -> MapMouseEntered(vBox4));
+        vBox4.setOnMouseClicked(e -> LoadGame(3));
+
+        newGridPane.getChildren().add(vBox1);
+        newGridPane.setRowIndex(vBox1, 0);
+        newGridPane.setColumnIndex(vBox1, 0);
+
+        newGridPane.getChildren().add(vBox2);
+        newGridPane.setRowIndex(vBox2, 0);
+        newGridPane.setColumnIndex(vBox2, 1);
+
+        newGridPane.getChildren().add(vBox3);
+        newGridPane.setRowIndex(vBox3, 1);
+        newGridPane.setColumnIndex(vBox3, 0);
+
+        newGridPane.getChildren().add(vBox4);
+        newGridPane.setRowIndex(vBox4, 1);
+        newGridPane.setColumnIndex(vBox4, 1);
+
+        var menuGridPane = CreateGridPane(100.0, 100.0, 1, 2);
+
+        var LabelMenuLeft = new Label("SELECT MAP");
+        LabelMenuLeft.setStyle("-fx-background-color: #000000;");
+        LabelMenuLeft.setFont(new Font(30));
+        menuGridPane.getChildren().add(LabelMenuLeft);
+        menuGridPane.setRowIndex(LabelMenuLeft, 0);
+        menuGridPane.setColumnIndex(LabelMenuLeft, 0);
+        menuGridPane.setHalignment(LabelMenuLeft, HPos.LEFT);
+
+        var LabelMenuRight = new Label("REPLAY LAST GAME");
+        LabelMenuRight.setStyle("-fx-background-color: #000000;");
+        LabelMenuRight.setFont(new Font(20));
+        LabelMenuRight.setOnMouseEntered(e -> ReplayEntered(LabelMenuRight));
+        LabelMenuRight.setOnMouseClicked(e -> LoadReplay());
+        menuGridPane.getChildren().add(LabelMenuRight);
+        menuGridPane.setRowIndex(LabelMenuRight, 0);
+        menuGridPane.setColumnIndex(LabelMenuRight, 1);
+        menuGridPane.setHalignment(LabelMenuRight, HPos.RIGHT);
+
+        var menuLayoutGridPane = CreteMenuGridPane();
+        menuLayoutGridPane.getChildren().add(menuGridPane);
+        menuLayoutGridPane.setRowIndex(menuGridPane, 0);
+        menuLayoutGridPane.setColumnIndex(menuGridPane, 0);
+        menuLayoutGridPane.getChildren().add(newGridPane);
+        menuLayoutGridPane.setRowIndex(newGridPane, 1);
+        menuLayoutGridPane.setColumnIndex(newGridPane, 0);
+
+        vBox.getChildren().add(menuLayoutGridPane);
+        root.getChildren().add(vBox);
+    }
+
+    private void OpenGame(int mapNum) throws FileNotFoundException {
+
+        root.getChildren().removeAll();
+
+        VBox vBox = new VBox();
+        vBox.setStyle("-fx-background-color: #FFFFFF;");
+
+        var mapParserResult = mapParser.getMap(mapNum);
+        Game.gameGridPane = GetGameGridPane(100.0, 100.0, mapParserResult.rows(), mapParserResult.cols(), mapParserResult.fields());
+        Game.CommonObjectSize = min(Constants.WindowWidth / mapParserResult.cols(), Constants.WindowHeight / mapParserResult.rows());
+        CreateObjectMap(mapParserResult.fields());
+
+        vBox.getChildren().add(gameGridPane);
+        Game.root.getChildren().add(vBox);
+    }
+
+    private int ghostSourceIndex = 0;
+    private void AddObjectToMap(int row, int col, MazeObject objectType) throws FileNotFoundException {
+
+        Image image = null;
+        switch (objectType) {
+            case Pacman -> {
+                System.out.println("přidávám pacmana");
+                image = new Image(new FileInputStream("C:\\Users\\Roman Čechmánek\\Desktop\\pacman.gif"));
+            }
+            case Ghost -> {
+                System.out.println("přidávám ghosta");
+                image = new Image(new FileInputStream("C:\\Users\\Roman Čechmánek\\Desktop\\" + Constants.GhostSource[(ghostSourceIndex++) % 4]));
+            }
+            case Key -> {
+                System.out.println("přidávám klíč");
+                image = new Image(new FileInputStream("C:\\Users\\Roman Čechmánek\\Desktop\\key.png"));
+            }
+            case Target -> {
+                System.out.println("přidávám cíl");
+                image = new Image(new FileInputStream("C:\\Users\\Roman Čechmánek\\Desktop\\target.png"));
+            }
+        }
+        
+        ImageView imageView = new ImageView(image);
+        imageView.setFitWidth(CommonObjectSize);
+        imageView.setFitHeight(CommonObjectSize);
+        gameGridPane.getChildren().add(imageView);
+        gameGridPane.setRowIndex(imageView, row);
+        gameGridPane.setColumnIndex(imageView, col);
+    }
+
+    public void CreateObjectMap(String[][] fields) throws FileNotFoundException {
+        for(int r = 0; r < fields.length; r++)
+        {
+            for(int c = 0; c < fields[0].length; c++)
+            {
+                switch (fields[r][c])
+                {
+                    case "T" -> {
+                        AddObjectToMap(r, c, MazeObject.Target);
+                    }
+                    case "G" -> {
+                        AddObjectToMap(r, c, MazeObject.Ghost);
+                    }
+                    case "K" -> {
+                        AddObjectToMap(r, c, MazeObject.Key);
+                    }
+                    case "S" -> {
+                        AddObjectToMap(r, c, MazeObject.Pacman);
+                    }
+                }
+            }
+        }
     }
 }
