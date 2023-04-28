@@ -1,5 +1,5 @@
 package Game.Records;
 
-public record MapParserResult(int rows, int cols, String[][] fields) {
+public record MapParserResult(int rows, int cols, int keys, String[][] fields) {
 
 }

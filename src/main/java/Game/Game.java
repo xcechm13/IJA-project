@@ -116,7 +116,7 @@ public class Game extends Application {
         {
             return false;
         }
-        if(maze[row][col] == "X")
+        if(maze[row][col].startsWith("X"))
         {
             return true;
         }
@@ -306,8 +306,7 @@ public class Game extends Application {
         throw new UnsupportedOperationException();
     }
 
-    private void OpenMenu()
-    {
+    private void OpenMenu() throws IOException {
         root.getChildren().removeAll();
 
         VBox vBox = new VBox();
@@ -390,7 +389,7 @@ public class Game extends Application {
         root.getChildren().add(vBox);
     }
 
-    private void OpenGame(int mapNum) throws FileNotFoundException {
+    private void OpenGame(int mapNum) throws IOException {
 
         root.getChildren().removeAll();
 
