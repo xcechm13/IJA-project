@@ -408,19 +408,19 @@ public class Game extends Application {
         switch (objectType) {
             case Pacman -> {
                 System.out.println("přidávám pacmana");
-                image = new Image(new FileInputStream("C:\\Users\\Roman Čechmánek\\Desktop\\pacman.gif"));
+                image = new Image("pacman_right.gif");
             }
             case Ghost -> {
                 System.out.println("přidávám ghosta");
-                image = new Image(new FileInputStream("C:\\Users\\Roman Čechmánek\\Desktop\\" + Constants.GhostSource[(ghostSourceIndex++) % 4]));
+                image = new Image(Constants.GhostSource[(ghostSourceIndex++) % 4]);
             }
             case Key -> {
                 System.out.println("přidávám klíč");
-                image = new Image(new FileInputStream("C:\\Users\\Roman Čechmánek\\Desktop\\key.png"));
+                image = new Image("key.png");
             }
             case Target -> {
                 System.out.println("přidávám cíl");
-                image = new Image(new FileInputStream("C:\\Users\\Roman Čechmánek\\Desktop\\target.png"));
+                image = new Image("target.png");
             }
         }
         
