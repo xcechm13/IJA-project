@@ -8,7 +8,7 @@ public interface ICommonMazeObject {
 
     public boolean IsKey();
 
-    public boolean IsGoal();
+    public boolean IsTarget();
 
     public ICommonField GetField();
 }

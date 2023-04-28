@@ -39,7 +39,7 @@ public class GhostObject implements ICommonMazeObject {
     }
 
     @Override
-    public boolean IsGoal()
+    public boolean IsTarget()
     {
         // TODO
         throw new UnsupportedOperationException();

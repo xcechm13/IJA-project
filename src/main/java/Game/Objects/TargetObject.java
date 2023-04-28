@@ -4,13 +4,13 @@ import Interfaces.ICommonField;
 import Interfaces.ICommonMazeObject;
 import javafx.scene.layout.GridPane;
 
-public class GoalObject implements ICommonMazeObject {
+public class TargetObject implements ICommonMazeObject {
 
     private GridPane maze;
     private int row;
     private int col;
 
-    public GoalObject(GridPane maze, int row, int col) {
+    public TargetObject(GridPane maze, int row, int col) {
         this.maze = maze;
         this.row = row;
         this.col = col;
@@ -38,7 +38,7 @@ public class GoalObject implements ICommonMazeObject {
     }
 
     @Override
-    public boolean IsGoal()
+    public boolean IsTarget()
     {
         // TODO
         throw new UnsupportedOperationException();

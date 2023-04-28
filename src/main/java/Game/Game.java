@@ -4,7 +4,10 @@ import ConstantsEnums.Constants;
 import ConstantsEnums.FieldNeighbour;
 import ConstantsEnums.FieldPixels;
 import ConstantsEnums.MazeObject;
+import Game.Fields.PathField;
+import Game.Fields.WallField;
 import Game.Records.MapParserResult;
+import Interfaces.ICommonField;
 import javafx.application.Application;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -29,6 +32,8 @@ public class Game extends Application {
     private static StackPane root;
     private static GridPane gameGridPane;
     private static double CommonObjectSize;
+
+    private ICommonField[][] maze;
 
     @Override
     public void start(Stage stage) throws IOException
@@ -393,6 +398,7 @@ public class Game extends Application {
         vBox.setStyle("-fx-background-color: #FFFFFF;");
 
         var mapParserResult = mapParser.getMap(mapNum);
+        maze = new ICommonField[mapParserResult.rows()][mapParserResult.cols()];
         Game.gameGridPane = GetGameGridPane(100.0, 100.0, mapParserResult.rows(), mapParserResult.cols(), mapParserResult.fields());
         Game.CommonObjectSize = min(Constants.WindowWidth / mapParserResult.cols(), Constants.WindowHeight / mapParserResult.rows());
         CreateObjectMap(mapParserResult.fields());
@@ -441,15 +447,30 @@ public class Game extends Application {
                 {
                     case "T" -> {
                         AddObjectToMap(r, c, MazeObject.Target);
+                        maze[r][c] = new PathField(r,c, maze);
+                        //TODO pridat objekt do pathfieldu
                     }
                     case "G" -> {
                         AddObjectToMap(r, c, MazeObject.Ghost);
+                        maze[r][c] = new PathField(r,c, maze);
+                        //TODO pridat objekt do pathfieldu
                     }
                     case "K" -> {
                         AddObjectToMap(r, c, MazeObject.Key);
+                        maze[r][c] = new PathField(r,c, maze);
+                        //TODO pridat objekt do pathfieldu
                     }
                     case "S" -> {
                         AddObjectToMap(r, c, MazeObject.Pacman);
+                        maze[r][c] = new PathField(r,c, maze);
+                        //TODO pridat objekt do pathfieldu
+                    }
+                    case "." -> {
+                        maze[r][c] = new PathField(r,c, maze);
+                        //TODO pridat objekt do pathfieldu
+                    }
+                    case "X" -> {
+                        maze[r][c] = new WallField(r,c, maze);
                     }
                 }
             }

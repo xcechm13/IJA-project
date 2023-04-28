@@ -4,6 +4,8 @@ import ConstantsEnums.Direction;
 import Interfaces.ICommonField;
 import Interfaces.ICommonMazeObject;
 
+import java.util.List;
+
 public class WallField implements ICommonField {
 
     private int row;
@@ -25,14 +27,7 @@ public class WallField implements ICommonField {
     }
 
     @Override
-    public ICommonMazeObject[] GetMazeObjects()
-    {
-        // TODO
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean CanMove()
+    public List<ICommonMazeObject> GetMazeObjects()
     {
         // TODO
         throw new UnsupportedOperationException();
@@ -55,13 +50,18 @@ public class WallField implements ICommonField {
     @Override
     public boolean IsPathField()
     {
-        // TODO
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
     public ICommonField NextField(Direction direction)
     {
+        // TODO
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean Contains(ICommonMazeObject object) {
         // TODO
         throw new UnsupportedOperationException();
     }
