@@ -52,7 +52,7 @@ public class GhostView extends Observable implements ICommonMazeObjectView {
     }
 
     @Override
-    public ImageView CreateView()
+    public synchronized ImageView CreateView()
     {
         Image image = new Image(Constants.GhostSource[random.nextInt(4)]);
         ImageView imageView = new ImageView(image);
@@ -93,7 +93,7 @@ public class GhostView extends Observable implements ICommonMazeObjectView {
         timeline.play();
     }
 
-    private void AnimationCompleted()
+    private synchronized void AnimationCompleted()
     {
         switch (actDirection) {
             case Up -> {

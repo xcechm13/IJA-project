@@ -36,6 +36,8 @@ public class Game extends Application {
     private static int cols;
     private static int keys;
     private ICommonField[][] maze;
+    private static ProcessRunner processRunner;
+
 
     @Override
     public void start(Stage stage) throws IOException
@@ -63,6 +65,7 @@ public class Game extends Application {
     }
 
     public static void main(String[] args) {
+        processRunner = new ProcessRunner();
         mapParser = new MapParser();
         launch();
     }
@@ -425,7 +428,8 @@ public class Game extends Application {
                     case "G" -> {
                         maze[r][c] = new PathField(r,c, maze);
                         var object = new GhostObject(gameGridPane, r, c, Constants.WindowHeight / rows, Constants.WindowWidth / cols, maze[r][c]);
-                        object.start();
+                        //object.start();
+                        processRunner.addProcess(object);
                         maze[r][c].Put(object);
                     }
                     case "K" -> {
@@ -448,5 +452,6 @@ public class Game extends Application {
                 }
             }
         }
+        processRunner.start();
     }
 }

@@ -5,7 +5,6 @@ import Game.Fields.PathField;
 import Game.Views.GhostView;
 import Interfaces.ICommonField;
 import Interfaces.ICommonMazeObject;
-import javafx.scene.control.TableRow;
 import javafx.scene.layout.GridPane;
 
 import java.util.*;
@@ -14,7 +13,8 @@ public class GhostObject extends Thread implements ICommonMazeObject, Observer {
 
     private GridPane maze;
     private GhostView ghostView;
-    PathField field;
+    private PathField actField;
+    private PathField newField;
     private int row;
     private int col;
     private Random random;
@@ -25,7 +25,7 @@ public class GhostObject extends Thread implements ICommonMazeObject, Observer {
         this.row = row;
         this.col = col;
         this.ghostView = new GhostView(maze, row, col, height, width, this);
-        this.field = (PathField)field;
+        this.actField = (PathField)field;
         random = new Random();
         actDirection = GetRandomPossibleDirection();
     }
@@ -62,14 +62,14 @@ public class GhostObject extends Thread implements ICommonMazeObject, Observer {
     @Override
     public ICommonField GetField()
     {
-        return field;
+        return actField;
     }
 
     public boolean CanMove(Direction direction)
     {
-        if(field.NextField(direction) != null)
+        if(actField.NextField(direction) != null)
         {
-            if(field.NextField(direction).IsPathField())
+            if(actField.NextField(direction).IsPathField())
             {
                 return true;
             }
@@ -79,9 +79,8 @@ public class GhostObject extends Thread implements ICommonMazeObject, Observer {
 
     public boolean Move()
     {
-        field.Remove(this);
         actDirection = GetRandomPossibleDirectionWithoutOpposite();
-        field = (PathField)field.NextField(actDirection);
+        newField = (PathField) actField.NextField(actDirection);
         ghostView.AnimatedMove(actDirection);
         return true;
     }
@@ -89,10 +88,11 @@ public class GhostObject extends Thread implements ICommonMazeObject, Observer {
     @Override
     public void update(Observable o, Object arg)
     {
-        field.Put(this);
-        field.Remove(this);
+        actField.Remove(this);
+        newField.Put(this);
+        actField = newField;
         actDirection = GetRandomPossibleDirectionWithoutOpposite();
-        field = (PathField)field.NextField(actDirection);
+        newField = (PathField) actField.NextField(actDirection);
         ghostView.AnimatedMove(actDirection);
     }
 
