@@ -3,26 +3,26 @@ package Game;
 import ConstantsEnums.Constants;
 import ConstantsEnums.FieldNeighbour;
 import ConstantsEnums.FieldPixels;
-import ConstantsEnums.MazeObject;
 import Game.Fields.PathField;
 import Game.Fields.WallField;
+import Game.Objects.GhostObject;
+import Game.Objects.KeyObject;
+import Game.Objects.PacmanObject;
+import Game.Objects.TargetObject;
 import Game.Records.MapParserResult;
 import Interfaces.ICommonField;
 import javafx.application.Application;
 import javafx.geometry.HPos;
-import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import static java.lang.Math.min;
 
 public class Game extends Application {
@@ -32,7 +32,9 @@ public class Game extends Application {
     private static StackPane root;
     private static GridPane gameGridPane;
     private static double CommonObjectSize;
-
+    private static int rows;
+    private static int cols;
+    private static int keys;
     private ICommonField[][] maze;
 
     @Override
@@ -51,7 +53,6 @@ public class Game extends Application {
         StackPane root = new StackPane();
         Game.root = root;
         root.setStyle("-fx-background-color: #000000;");
-        root.setPadding(new Insets(0,10,10,10));
 
         Scene scene = new Scene(root, Constants.WindowWidth, Constants.WindowHeight);
         scene.setUserAgentStylesheet(getClass().getResource("style.css").toExternalForm());
@@ -397,6 +398,9 @@ public class Game extends Application {
         vBox.setStyle("-fx-background-color: #FFFFFF;");
 
         var mapParserResult = mapParser.getMap(mapNum);
+        rows = mapParserResult.rows();
+        cols = mapParserResult.cols();
+        keys = mapParserResult.keys();
         maze = new ICommonField[mapParserResult.rows()][mapParserResult.cols()];
         Game.gameGridPane = GetGameGridPane(100.0, 100.0, mapParserResult.rows(), mapParserResult.cols(), mapParserResult.fields());
         Game.CommonObjectSize = min(Constants.WindowWidth / mapParserResult.cols(), Constants.WindowHeight / mapParserResult.rows());
@@ -404,37 +408,6 @@ public class Game extends Application {
 
         vBox.getChildren().add(gameGridPane);
         Game.root.getChildren().add(vBox);
-    }
-
-    private int ghostSourceIndex = 0;
-    private void AddObjectToMap(int row, int col, MazeObject objectType) throws FileNotFoundException {
-
-        Image image = null;
-        switch (objectType) {
-            case Pacman -> {
-                System.out.println("přidávám pacmana");
-                image = new Image("pacman_right.gif");
-            }
-            case Ghost -> {
-                System.out.println("přidávám ghosta");
-                image = new Image(Constants.GhostSource[(ghostSourceIndex++) % 4]);
-            }
-            case Key -> {
-                System.out.println("přidávám klíč");
-                image = new Image("key.png");
-            }
-            case Target -> {
-                System.out.println("přidávám cíl");
-                image = new Image("target.png");
-            }
-        }
-        
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(CommonObjectSize);
-        imageView.setFitHeight(CommonObjectSize);
-        gameGridPane.getChildren().add(imageView);
-        gameGridPane.setRowIndex(imageView, row);
-        gameGridPane.setColumnIndex(imageView, col);
     }
 
     public void CreateObjectMap(String[][] fields) throws FileNotFoundException {
@@ -445,28 +418,29 @@ public class Game extends Application {
                 switch (fields[r][c])
                 {
                     case "T" -> {
-                        AddObjectToMap(r, c, MazeObject.Target);
+                        var object = new TargetObject(gameGridPane, r, c, Constants.WindowHeight / rows, Constants.WindowWidth / cols);
                         maze[r][c] = new PathField(r,c, maze);
-                        //TODO pridat objekt do pathfieldu
+                        maze[r][c].Put(object);
                     }
                     case "G" -> {
-                        AddObjectToMap(r, c, MazeObject.Ghost);
                         maze[r][c] = new PathField(r,c, maze);
-                        //TODO pridat objekt do pathfieldu
+                        var object = new GhostObject(gameGridPane, r, c, Constants.WindowHeight / rows, Constants.WindowWidth / cols, maze[r][c]);
+                        object.start();
+                        maze[r][c].Put(object);
                     }
                     case "K" -> {
-                        AddObjectToMap(r, c, MazeObject.Key);
+                        var object = new KeyObject(gameGridPane, r, c, Constants.WindowHeight / rows, Constants.WindowWidth / cols);
                         maze[r][c] = new PathField(r,c, maze);
-                        //TODO pridat objekt do pathfieldu
+                        maze[r][c].Put(object);
                     }
                     case "S" -> {
-                        AddObjectToMap(r, c, MazeObject.Pacman);
                         maze[r][c] = new PathField(r,c, maze);
-                        //TODO pridat objekt do pathfieldu
+                        var object = new PacmanObject(gameGridPane, r, c, keys, Constants.WindowHeight / rows, Constants.WindowWidth / cols, maze[r][c]);
+                        //object.start();
+                        maze[r][c].Put(object);
                     }
                     case "." -> {
                         maze[r][c] = new PathField(r,c, maze);
-                        //TODO pridat objekt do pathfieldu
                     }
                     case "X" -> {
                         maze[r][c] = new WallField(r,c, maze);

@@ -6,9 +6,11 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
+import java.util.Random;
+
 import static java.lang.Math.min;
 
-public class KeyView implements ICommonMazeObjectView {
+public class TargetView implements ICommonMazeObjectView {
 
     private ImageView imageView;
     private GridPane maze;
@@ -16,8 +18,10 @@ public class KeyView implements ICommonMazeObjectView {
     private int col;
     private double height;
     private double width;
+    private double commonObjectSize;
 
-    public KeyView(GridPane maze, int row, int col, double height, double width) {
+    public TargetView(GridPane maze, int row, int col, double height, double width)
+    {
         this.maze = maze;
         this.row = row;
         this.col = col;
@@ -29,14 +33,14 @@ public class KeyView implements ICommonMazeObjectView {
     @Override
     public void SetFieldSize(double height, double width)
     {
-        // TODO VOLÁNO PO ZMĚNĚ ŠÍŘKY OKNA
-        throw new UnsupportedOperationException();
+
     }
+
 
     @Override
     public ImageView CreateView()
     {
-        Image image = new Image(Constants.KeySource);
+        Image image = new Image(Constants.TargetSource);
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(min(width, height));
         imageView.setFitHeight(min(width, height));
@@ -44,11 +48,5 @@ public class KeyView implements ICommonMazeObjectView {
         maze.setRowIndex(imageView, row);
         maze.setColumnIndex(imageView, col);
         return imageView;
-    }
-
-    public void Remove()
-    {
-        // TODO TOTO BY MOHLO BÝT ŘEŠENO PŘES DESTRUKTOR (SMAŽE KLÍČ Z MAZE)
-        throw new UnsupportedOperationException();
     }
 }

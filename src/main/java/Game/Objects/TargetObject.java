@@ -1,5 +1,6 @@
 package Game.Objects;
 
+import Game.Views.TargetView;
 import Interfaces.ICommonField;
 import Interfaces.ICommonMazeObject;
 import javafx.scene.layout.GridPane;
@@ -7,41 +8,39 @@ import javafx.scene.layout.GridPane;
 public class TargetObject implements ICommonMazeObject {
 
     private GridPane maze;
+    private TargetView targetView;
     private int row;
     private int col;
 
-    public TargetObject(GridPane maze, int row, int col) {
+    public TargetObject(GridPane maze, int row, int col, double height, double width) {
         this.maze = maze;
         this.row = row;
         this.col = col;
+        this.targetView = new TargetView(maze, row, col, height, width);
     }
 
     @Override
     public boolean IsPacman()
     {
-        // TODO
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
     public boolean IsGhost()
     {
-        // TODO
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
     public boolean IsKey()
     {
-        // TODO
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
     public boolean IsTarget()
     {
-        // TODO
-        throw new UnsupportedOperationException();
+        return true;
     }
 
     @Override

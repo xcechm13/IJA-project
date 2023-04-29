@@ -9,8 +9,8 @@ import java.util.List;
 
 public class PathField implements ICommonField {
 
-    private int row;
-    private int col;
+    public int row;
+    public int col;
     private ICommonField[][] maze;
 
     List<ICommonMazeObject> MazeObjects;

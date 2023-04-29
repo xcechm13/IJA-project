@@ -1,5 +1,7 @@
 package Game.Objects;
 
+import Game.Views.GhostView;
+import Game.Views.KeyView;
 import Interfaces.ICommonField;
 import Interfaces.ICommonMazeObject;
 import javafx.scene.layout.GridPane;
@@ -7,41 +9,39 @@ import javafx.scene.layout.GridPane;
 public class KeyObject implements ICommonMazeObject {
 
     private GridPane maze;
+    private KeyView keyView;
     private int row;
     private int col;
 
-    public KeyObject(GridPane maze, int row, int col) {
+    public KeyObject(GridPane maze, int row, int col, double height, double width) {
         this.maze = maze;
         this.row = row;
         this.col = col;
+        this.keyView = new KeyView(maze, row, col, height, width);
     }
 
     @Override
     public boolean IsPacman()
     {
-        // TODO
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
     public boolean IsGhost()
     {
-        // TODO
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
     public boolean IsKey()
     {
-        // TODO
-        throw new UnsupportedOperationException();
+        return true;
     }
 
     @Override
     public boolean IsTarget()
     {
-        // TODO
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override

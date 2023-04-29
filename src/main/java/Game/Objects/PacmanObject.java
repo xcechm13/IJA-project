@@ -1,12 +1,17 @@
 package Game.Objects;
 
 import ConstantsEnums.Direction;
+import Game.Fields.PathField;
 import Game.Views.PacmanView;
 import Interfaces.ICommonField;
 import Interfaces.ICommonMazeObject;
+import javafx.animation.TranslateTransition;
 import javafx.scene.layout.GridPane;
 
-public class PacmanObject implements ICommonMazeObject {
+import java.util.Observable;
+import java.util.Observer;
+
+public class PacmanObject extends Thread implements ICommonMazeObject, Observer {
 
     private int row;
     private int col;
@@ -16,51 +21,54 @@ public class PacmanObject implements ICommonMazeObject {
     private int totalKeys;
     private int steps;
     private PacmanView pacmanView;
+    private PathField field;
 
-    public PacmanObject(int row, int col, GridPane maze, int foundKeys, int totalKeys, PacmanView pacmanView) {
+    public PacmanObject(GridPane maze, int row, int col, int totalKeys, double height, double width, ICommonField field) {
         this.row = row;
         this.col = col;
         this.maze = maze;
+        this.field = (PathField) field;
         this.lives = 3;
-        this.foundKeys = foundKeys;
+        this.foundKeys = 0;
         this.totalKeys = totalKeys;
         this.steps = 0;
-        this.pacmanView = pacmanView;
+        this.pacmanView = new PacmanView(maze, row, col, height, width, this);
+
+    }
+
+    public void run()
+    {
+        pacmanView.AnimatedMove(Direction.Right);
     }
 
     @Override
     public boolean IsPacman()
     {
-        // TODO
-        throw new UnsupportedOperationException();
+        return true;
     }
 
     @Override
     public boolean IsGhost()
     {
-        // TODO
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
     public boolean IsKey()
     {
-        // TODO
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
     public boolean IsTarget()
     {
-        // TODO
-        throw new UnsupportedOperationException();
+        return false;
     }
 
     @Override
     public ICommonField GetField()
     {
-        // TODO
-        throw new UnsupportedOperationException();
+        return field;
     }
 
     public boolean CanMove(Direction direction)
@@ -79,5 +87,10 @@ public class PacmanObject implements ICommonMazeObject {
     {
         // TODO
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        pacmanView.AnimatedMove(Direction.Right);
     }
 }
