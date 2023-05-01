@@ -22,28 +22,24 @@ public class WallField implements ICommonField {
     @Override
     public boolean IsEmpty()
     {
-        // TODO
         throw new UnsupportedOperationException();
     }
 
     @Override
     public List<ICommonMazeObject> GetMazeObjects()
     {
-        // TODO
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void Put(ICommonMazeObject object)
     {
-        // TODO
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void Remove(ICommonMazeObject object)
     {
-        // TODO
         throw new UnsupportedOperationException();
     }
 
@@ -56,13 +52,12 @@ public class WallField implements ICommonField {
     @Override
     public ICommonField NextField(Direction direction)
     {
-        // TODO
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean Contains(ICommonMazeObject object) {
-        // TODO
+    public boolean Contains(ICommonMazeObject object)
+    {
         throw new UnsupportedOperationException();
     }
 }

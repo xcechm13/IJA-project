@@ -51,6 +51,11 @@ public class KeyObject implements ICommonMazeObject {
         throw new UnsupportedOperationException();
     }
 
+    public void RemoveFromMap()
+    {
+        keyView.Remove();
+    }
+
     @Override
     public void SetFieldSize(double height, double width)
     {

@@ -102,15 +102,22 @@ public class GhostObject implements ICommonMazeObject, Observer, Runnable {
     @Override
     public void update(Observable o, Object arg)
     {
-        actField.Remove(this);
-        newField.Put(this);
-        actField = newField;
-        if(!isStopped)
+        if (o instanceof PathField)
         {
-            actDirection = GetRandomPossibleDirectionWithoutOpposite();
-            if(actDirection == null) return;
-            newField = (PathField) actField.NextField(actDirection);
-            ghostView.AnimatedMove(actDirection);
+            //System.out.println("notifikace u Ghosta");
+        }
+        else
+        {
+            actField.Remove(this);
+            newField.Put(this);
+            actField = newField;
+            if(!isStopped)
+            {
+                actDirection = GetRandomPossibleDirectionWithoutOpposite();
+                if(actDirection == null) return;
+                newField = (PathField) actField.NextField(actDirection);
+                ghostView.AnimatedMove(actDirection);
+            }
         }
     }
 

@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 
+import java.nio.file.Path;
 import java.util.*;
 
 import static java.lang.Math.max;
@@ -27,6 +28,7 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
     private PacmanView pacmanView;
     private static PathField actField;
     private PathField newField;
+    private PathField startingField;
     private Scene scene;
     private boolean Moving = true;
     private boolean GotoFieldActive = false;
@@ -46,6 +48,7 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         this.col = col;
         this.maze = maze;
         this.actField = (PathField) field;
+        this.startingField = (PathField) field;
         this.lives = 3;
         this.foundKeys = 0;
         this.totalKeys = totalKeys;
@@ -124,6 +127,20 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         throw new UnsupportedOperationException();
     }
 
+    public void FindKey()
+    {
+        foundKeys++;
+    }
+
+    public boolean AllKeysFound()
+    {
+        if (foundKeys == totalKeys)
+        {
+            return true;
+        }
+        return false;
+    }
+
     public boolean Move()
     {
         if(CanMove(actDirection))
@@ -138,18 +155,42 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
 
     @Override
     public void update(Observable o, Object arg) {
-        if(o instanceof PacmanView)
+
+        if(o instanceof  PathField)
         {
-            // update i PacmanView
+            List<ICommonMazeObject> objectsOnField = actField.GetMazeObjects();
+            //boolean obsahuje = false;
+
+            /*for (ICommonMazeObject potentionalGhost: objectsOnField)
+            {
+                if(potentionalGhost.IsPacman()) {
+                    System.out.println("obsahuje pacmana: ");
+                }
+            }*/
+
+            for (ICommonMazeObject potentionalGhost: objectsOnField)
+            {
+                if(potentionalGhost.IsGhost())
+                {
+                    //ODKOMENT HERE
+                    lives--;
+                    System.out.println("pocet zivotu: " + lives);
+                    //actField.Remove(this);
+                    //startingField.Put(this);
+                    //actField = startingField;
+                    //actDirection = GetRandomDirection();
+                    //reqDirection = actDirection;
+                    break;
+                }
+            }
+            //System.out.println("pocet zivotu: " + lives);
         }
         else
         {
-            // update z PathField
-        }
-
-        System.out.println(reqDirection);
+            //System.out.println(reqDirection);
 
         actField.Remove(this);
+        //actField = newField; //TODO DEL
         newField.Put(this);
         actField = newField;
         if(!isStopped)
@@ -170,20 +211,21 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
                 }
             }
 
-            if(CanMove(reqDirection))
-            {
-                newField = (PathField) actField.NextField(reqDirection);
-                actDirection = reqDirection;
-                pacmanView.AnimatedMove(actDirection);
-            }
-            else if(CanMove(actDirection))
-            {
-                newField = (PathField) actField.NextField(actDirection);
-                pacmanView.AnimatedMove(actDirection);
-            }
-            else
-            {
-                Moving = false;
+                if(CanMove(reqDirection))
+                {
+                    newField = (PathField) actField.NextField(reqDirection);
+                    actDirection = reqDirection;
+                    pacmanView.AnimatedMove(actDirection);
+                }
+                else if(CanMove(actDirection))
+                {
+                    newField = (PathField) actField.NextField(actDirection);
+                    pacmanView.AnimatedMove(actDirection);
+                }
+                else
+                {
+                    Moving = false;
+                }
             }
         }
     }

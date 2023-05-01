@@ -1,13 +1,17 @@
 package Game.Fields;
 
 import ConstantsEnums.Direction;
+import Game.Objects.GhostObject;
+import Game.Objects.KeyObject;
+import Game.Objects.PacmanObject;
 import Interfaces.ICommonField;
 import Interfaces.ICommonMazeObject;
 
 import java.util.ArrayList;
+import java.util.Observable;
 import java.util.List;
 
-public class PathField implements ICommonField {
+public class PathField extends Observable implements ICommonField {
 
     public int row;
     public int col;
@@ -43,15 +47,34 @@ public class PathField implements ICommonField {
             throw new UnsupportedOperationException();
         }
 
+        MazeObjects.add(object);
         if(object.IsPacman())
         {
-            //TODO addObserver
+            this.addObserver((PacmanObject)object);
+            setChanged();
+            notifyObservers();
+
+            for (ICommonMazeObject o: MazeObjects)
+            {
+                if(o.IsKey())
+                {
+                    Remove(o);
+                    ((KeyObject) o).RemoveFromMap();
+                    ((PacmanObject) object).FindKey();
+                }
+
+                if(o.IsTarget() && ((PacmanObject) object).AllKeysFound())
+                {
+                    System.out.println("VYHRAL JSI");
+                }
+            }
         }
         else if(object.IsGhost())
         {
-            //TODO addObserver
+            this.addObserver((GhostObject)object);
+            setChanged();
+            notifyObservers();
         }
-        MazeObjects.add(object);
     }
 
     @Override
@@ -64,14 +87,13 @@ public class PathField implements ICommonField {
 
         if(object.IsPacman())
         {
-            //TODO removeObserver
+            this.deleteObserver((PacmanObject)object);
         }
         else if(object.IsGhost())
         {
-            //TODO removeObserver
+            this.deleteObserver((GhostObject)object);
         }
         MazeObjects.remove(object);
-        //TODO notify observers
     }
 
     @Override

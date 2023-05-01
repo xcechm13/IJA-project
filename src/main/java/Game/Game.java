@@ -64,7 +64,7 @@ public class Game extends Application {
         stage.setScene(scene);
         stage.setTitle("PACMAN");
         stage.show();
-        OpenGame(1);
+        OpenGame(0);
     }
 
     public static void main(String[] args) {
@@ -458,6 +458,8 @@ public class Game extends Application {
             }
         }
         processRunner.start();
+
+
     }
 
     private void UpdateFieldSize(double height, double width)
