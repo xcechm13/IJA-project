@@ -50,7 +50,6 @@ public class KeyView implements ICommonMazeObjectView {
 
     public void Remove()
     {
-        // TODO TOTO BY MOHLO BÝT ŘEŠENO PŘES DESTRUKTOR (SMAŽE KLÍČ Z MAZE)
-        throw new UnsupportedOperationException();
+        maze.getChildren().remove(imageView);
     }
 }

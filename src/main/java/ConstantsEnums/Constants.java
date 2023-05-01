@@ -10,6 +10,6 @@ public class Constants {
             "pacman_up_opened.png", "pacman_down_opened.png", "pacman_left_opened.png", "pacman_right_opened.png"};
     public static final String KeySource = "key.png";
     public static final String TargetSource = "target.png";
-    public static final double PacmanMoveDelay = 0.2;
+    public static final double PacmanMoveDelay = 0.05;
     public static final double GhostMoveDelay = 0.3;
 }

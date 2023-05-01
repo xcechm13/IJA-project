@@ -64,7 +64,7 @@ public class Game extends Application {
         stage.setScene(scene);
         stage.setTitle("PACMAN");
         stage.show();
-        OpenGame(0);
+        OpenGame(1);
     }
 
     public static void main(String[] args) {

@@ -2,8 +2,6 @@ package Game.Objects;
 
 import ConstantsEnums.Direction;
 import Game.Fields.PathField;
-import Game.Records.DLSResult;
-import Game.Records.DLSState;
 import Game.Records.Point;
 import Game.Views.PacmanView;
 import Interfaces.ICommonField;
@@ -14,6 +12,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 
 import java.util.*;
+
+import static java.lang.Math.max;
 
 public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
 
@@ -32,11 +32,12 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
     private boolean GotoFieldActive = false;
     private int GotoFieldRow = -1;
     private int GotoFieldCol = -1;
+    List<Direction> path;
+    List<PathField> visited = new ArrayList<>();
     Direction actDirection;
     Direction reqDirection;
     Random random;
     private volatile boolean isStopped = false;
-    private List<Direction> path;
     int pathIndex = 0;
 
     public PacmanObject(GridPane maze, int row, int col, int totalKeys, double height, double width, ICommonField field, Scene scene)
@@ -137,6 +138,14 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
 
     @Override
     public void update(Observable o, Object arg) {
+        if(o instanceof PacmanView)
+        {
+            // update i PacmanView
+        }
+        else
+        {
+            // update z PathField
+        }
 
         System.out.println(reqDirection);
 
@@ -149,11 +158,15 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
             {
                 if(actField.row == GotoFieldRow && actField.col == GotoFieldCol)
                 {
+                    reqDirection = actDirection;
                     GotoFieldActive = false;
                 }
                 else
                 {
-                    reqDirection = path.get(pathIndex++);
+                    try {
+                        reqDirection = path.get(pathIndex++);
+                    }catch (Exception e){}
+
                 }
             }
 
@@ -231,21 +244,26 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
 
     private void GoToField(int row, int col)
     {
-        path = findPath(row,col);
+        var result = findPath(row, col);
+        path = PointsToDirections(result);
+        for(int i=0; i<path.size(); i++)
+        {
+            System.out.println(path.get(i));
+        }
+
         if(path.size() == 0) return;
-        System.out.println(path);
-        //GotoFieldActive = true;
+        GotoFieldActive = true;
         GotoFieldRow = row;
         GotoFieldCol = col;
         pathIndex = 0;
         if(!Moving)
         {
-            actDirection = reqDirection;
-            if(CanMove(reqDirection))
+            actDirection = GotoFieldActive ? path.get(pathIndex++) : reqDirection;
+            if(CanMove(actDirection))
             {
                 Moving = true;
-                newField = (PathField) actField.NextField(reqDirection);
-                pacmanView.AnimatedMove(reqDirection);
+                newField = (PathField) actField.NextField(actDirection);
+                pacmanView.AnimatedMove(actDirection);
             }
         }
         System.out.println("Najdi cestu z [" + actField.row + "," + actField.col + "] z " + "[" + row + "," + col + "]");
@@ -253,120 +271,68 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
 
     }
 
-    private List<Direction> findPath(int targetRow, int targetCol)
+    private ArrayList<Point> findPath(int targetRow, int targetCol)
     {
         int maxDeep = 1;
-        List<Direction> directions = new ArrayList<>();
 
         while (true)
         {
-            var dlsResult = DLS(targetRow, targetCol, maxDeep);
-            if(dlsResult.success())
-            {
-                System.out.println(dlsResult.path());
-                var result = pointsToDirections(dlsResult.path());
-                System.out.println(result);
-                return result;
-            }
-            else
-            {
-                //System.out.println("Cesta nenalezena v hlouce " +  maxDeep);
-            }
-
-            if(dlsResult.NotExpandedBeacuseOfDeep())
+            visited.clear();
+            visited.add(actField);
+            var result = DLS(actField, targetRow, targetCol, ++maxDeep);
+            if(result == null)
             {
                 maxDeep++;
             }
-        }
-    }
-
-    private DLSResult DLS(int targetRow, int targetCol, int maxDeep)
-    {
-        List<DLSState> CLOSED = new ArrayList<>();
-        Stack<DLSState> OPEN = new Stack<>();
-        List<PathField> closed = new ArrayList<>();
-        List<PathField> open = new ArrayList<>();
-        OPEN.push(new DLSState(actField, null, 0));
-        var NotExpandedBeacuseOfDeep = false;
-
-        //path.add(new Point(last_state_parent.row, last_state_parent.col));
-        while(!OPEN.empty())
-        {
-            DLSState top = OPEN.pop();
-            List<Point> path = new ArrayList<>();
-
-            if(top.field().col == targetCol && top.field().row == targetRow)
-            {
-                // TODO CELÉ ŠPATNĚ - DODĚLÁM
-                System.out.println(targetRow + " " + targetCol);
-                var closed_top = CLOSED.get(CLOSED.size() - 1);
-                var actField = closed_top.field();
-                var parentField = closed_top.parent();
-
-                while (!CLOSED.isEmpty())
-                {
-                    closed_top = CLOSED.get(CLOSED.size() - 1);
-                    CLOSED.remove(closed_top);
-
-                    if(closed_top.parent() == null)
-                    {
-                        System.out.println("[[" + closed_top.field().row + "," + closed_top.field().col + "],[-]");
-
-                    }
-                    else
-                    {
-                        System.out.println("[[" + closed_top.field().row + "," + closed_top.field().col + "],[" + closed_top.parent().row + "," + closed_top.parent().col + "]");
-
-                    }
-                }
-                return new DLSResult(NotExpandedBeacuseOfDeep, true, path);
-            }
-
-            if(top.deep() < maxDeep)
-            {
-                for (Direction direction : Direction.values())
-                {
-                    var expended = top.field().NextField(direction);
-
-                    if(expended == null)
-                        continue;
-                    if(!expended.IsPathField())
-                        continue;
-                    if(closed.contains((PathField) expended))
-                        continue;
-                    if(open.contains((PathField) expended))
-                        continue;
-
-                    var expandedState = new DLSState((PathField) top.field().NextField(direction), top.field(), top.deep() + 1);
-                    OPEN.push(expandedState);
-                    open.add(expandedState.field());
-                }
-            }
             else
             {
-                NotExpandedBeacuseOfDeep = true;
+                return result;
             }
-            CLOSED.add(top);
-            closed.add(top.field());
         }
-
-
-
-        System.out.println("Cesta nenalezena");
-        return new DLSResult(NotExpandedBeacuseOfDeep, false, null);
     }
 
-    public static List<Direction> pointsToDirections(List<Point> points) {
-        List<Direction> directions = new ArrayList<>();
-
-        List<Point> reversedPoints = new ArrayList<>();
-        for (int i = points.size() - 1; i >= 0; i--) {
-            reversedPoints.add(points.get(i));
+    private ArrayList<Point> DLS(PathField field, int targetRow, int targetCol, int maxDeep)
+    {
+        if(field == null || maxDeep == 0)
+        {
+            return null;
         }
 
-        for (int i = 0; i < reversedPoints.size() - 1; i++) {
-            Point currentPoint = reversedPoints.get(i);
-            Point nextPoint = reversedPoints.get(i + 1);
+        ArrayList<Point> currentPath = new ArrayList<>();
+        currentPath.add(new Point(field.row, field.col));
+
+        for (Direction direction : Direction.values())
+        {
+            var nextField = field.NextField(direction);
+            if(nextField == null || !nextField.IsPathField()) continue;
+
+            var pathField = (PathField) nextField;
+
+            if(pathField.row == targetRow && pathField.col == targetCol)
+            {
+                currentPath.add(new Point(pathField.row, pathField.col));
+                return currentPath;
+            }
+            else if(!visited.contains(pathField))
+            {
+                visited.add(pathField);
+                ArrayList<Point> result = DLS(pathField, targetRow, targetCol, maxDeep - 1);
+                if(result != null)
+                {
+                    currentPath.addAll(result);
+                    return currentPath;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static List<Direction> PointsToDirections(List<Point> points) {
+        List<Direction> directions = new ArrayList<>();
+
+        for (int i = 0; i < points.size() - 1; i++) {
+            Point currentPoint = points.get(i);
+            Point nextPoint = points.get(i + 1);
 
             if (currentPoint.col() < nextPoint.col()) {
                 directions.add(Direction.Right);
