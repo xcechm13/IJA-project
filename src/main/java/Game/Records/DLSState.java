@@ -2,5 +2,5 @@ package Game.Records;
 
 import Game.Fields.PathField;
 
-public record DLSResult(PathField field, PathField parent) {
+public record DLSState(PathField field, PathField parent, int deep) {
 }

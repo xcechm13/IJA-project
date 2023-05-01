@@ -10,10 +10,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 
+import java.util.Objects;
 import java.util.Random;
 import java.util.Observable;
-
-import static ConstantsEnums.Constants.PacmanMoveDelay;
 import static java.lang.Math.min;
 
 public class PacmanView extends Observable implements ICommonMazeObjectView {
@@ -26,6 +25,7 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
     private double width;
     private Random random;
     private Timeline timeline;
+    private Direction actDirection;
 
     public PacmanView(GridPane maze, int row, int col, double height, double width, PacmanObject object) {
         this.maze = maze;
@@ -62,30 +62,66 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
 
     public void AnimatedMove(Direction direction)
     {
+        actDirection = direction;
         switch (direction) {
             case Up -> {
+                if(imageView.getImage().getUrl().contains("opened.png"))
+                {
+                    imageView.setImage(new Image(Constants.PacmanSource[0]));
+                }
+                else
+                {
+                    imageView.setImage(new Image(Constants.PacmanSource[4]));
+                }
+
                 KeyValue keyValue = new KeyValue(imageView.translateYProperty(), -height, Interpolator.LINEAR);
                 KeyFrame keyFrame = new KeyFrame(Duration.seconds(Constants.PacmanMoveDelay), keyValue);
                 timeline = new Timeline(keyFrame);
-                System.out.println("duch pohyb up");
             }
             case Down -> {
+                if(imageView.getImage().getUrl().contains("opened.png"))
+                {
+                    imageView.setImage(new Image(Constants.PacmanSource[1]));
+                }
+                else
+                {
+                    imageView.setImage(new Image(Constants.PacmanSource[5]));
+                }
+
+                //imageView.setImage(new Image(Constants.PacmanSource[Direction.Down.ordinal()]));
                 KeyValue keyValue = new KeyValue(imageView.translateYProperty(), height, Interpolator.LINEAR);
                 KeyFrame keyFrame = new KeyFrame(Duration.seconds(Constants.PacmanMoveDelay), keyValue);
                 timeline = new Timeline(keyFrame);
-                System.out.println("duch pohyb down");
             }
             case Left -> {
+                if(imageView.getImage().getUrl().contains("opened.png"))
+                {
+                    imageView.setImage(new Image(Constants.PacmanSource[2]));
+                }
+                else
+                {
+                    imageView.setImage(new Image(Constants.PacmanSource[6]));
+                }
+
+                //imageView.setImage(new Image(Constants.PacmanSource[Direction.Left.ordinal()]));
                 KeyValue keyValue = new KeyValue(imageView.translateXProperty(), -width, Interpolator.LINEAR);
                 KeyFrame keyFrame = new KeyFrame(Duration.seconds(Constants.PacmanMoveDelay), keyValue);
                 timeline = new Timeline(keyFrame);
-                System.out.println("duch pohyb left");
             }
             case Right -> {
+                if(imageView.getImage().getUrl().contains("opened.png"))
+                {
+                    imageView.setImage(new Image(Constants.PacmanSource[3]));
+                }
+                else
+                {
+                    imageView.setImage(new Image(Constants.PacmanSource[7]));
+                }
+
+                //imageView.setImage(new Image(Constants.PacmanSource[Direction.Right.ordinal()]));
                 KeyValue keyValue = new KeyValue(imageView.translateXProperty(), width, Interpolator.LINEAR);
                 KeyFrame keyFrame = new KeyFrame(Duration.seconds(Constants.PacmanMoveDelay), keyValue);
                 timeline = new Timeline(keyFrame);
-                System.out.println("duch pohyb right");
             }
         }
         timeline.setOnFinished(e -> AnimationCompleted());
@@ -94,11 +130,22 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
 
     private void AnimationCompleted()
     {
-        maze.setRowIndex(imageView, row);
-        maze.setColumnIndex(imageView, ++col);
+        switch (actDirection) {
+            case Up -> {
+                maze.setRowIndex(imageView, --row);
+            }
+            case Down -> {
+                maze.setRowIndex(imageView, ++row);
+            }
+            case Left -> {
+                maze.setColumnIndex(imageView, --col);
+            }
+            case Right -> {
+                maze.setColumnIndex(imageView, ++col);
+            }
+        }
         imageView.setTranslateX(0);
         imageView.setTranslateY(0);
-        System.out.println("Completed");
         setChanged();
         notifyObservers();
     }

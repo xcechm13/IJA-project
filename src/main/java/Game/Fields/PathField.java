@@ -83,21 +83,26 @@ public class PathField implements ICommonField {
     @Override
     public ICommonField NextField(Direction direction)
     {
-        switch (direction)
-        {
-            case Up:
-                if(row == 0) return null;
-                return maze[row -1][col];
-            case Down:
-                if(row == maze.length - 1) return null;
-                return maze[row +1][col];
-            case Left:
-                if(col == 0) return null;
-                return maze[row][col -1];
-            case Right:
-                if(row == maze[row].length - 1) return null;
-                return maze[row][col +1];
-            default: return null;
+        switch (direction) {
+            case Up -> {
+                if (row == 0) return null;
+                return maze[row - 1][col];
+            }
+            case Down -> {
+                if (row == maze.length - 1) return null;
+                return maze[row + 1][col];
+            }
+            case Left -> {
+                if (col == 0) return null;
+                return maze[row][col - 1];
+            }
+            case Right -> {
+                if (row == maze[row].length - 1) return null;
+                return maze[row][col + 1];
+            }
+            default -> {
+                return null;
+            }
         }
     }
 

@@ -29,8 +29,10 @@ public class KeyView implements ICommonMazeObjectView {
     @Override
     public void SetFieldSize(double height, double width)
     {
-        // TODO VOLÁNO PO ZMĚNĚ ŠÍŘKY OKNA
-        throw new UnsupportedOperationException();
+        this.height = height;
+        this.width = width;
+        imageView.setFitWidth(min(width, height));
+        imageView.setFitHeight(min(width, height));
     }
 
     @Override

@@ -33,7 +33,10 @@ public class TargetView implements ICommonMazeObjectView {
     @Override
     public void SetFieldSize(double height, double width)
     {
-
+        this.height = height;
+        this.width = width;
+        imageView.setFitWidth(min(width, height));
+        imageView.setFitHeight(min(width, height));
     }
 
 

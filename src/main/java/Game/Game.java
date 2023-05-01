@@ -19,44 +19,47 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import static java.lang.Math.min;
 
 public class Game extends Application {
 
     private static MapParser mapParser;
-    private static Stage stage;
     private static StackPane root;
     private static GridPane gameGridPane;
-    private static double CommonObjectSize;
     private static int rows;
     private static int cols;
     private static int keys;
+    private static double windowWidth;
+    private static double windowHeight;
     private ICommonField[][] maze;
     private static ProcessRunner processRunner;
+    private static Scene scene;
 
 
     @Override
     public void start(Stage stage) throws IOException
     {
-        Game.stage = stage;
         stage.widthProperty().addListener((observableValue, oldWidth, newWidth) -> {
-            // TODO reakce na změnu šířky okna
-            System.out.println("Nová šířka okna: " + newWidth);
+            if(!Double.isNaN((double)oldWidth))
+            {
+                windowWidth = (double)newWidth;
+                UpdateFieldSize(windowHeight / rows, windowWidth / cols);
+            }
         });
         stage.heightProperty().addListener((observableValue, oldHeight, newHeight) -> {
-            // TODO reakce na změnu výšky okna
-            System.out.println("Nová výška okna: " + newHeight);
+            if(!Double.isNaN((double)oldHeight))
+            {
+                windowHeight = (double)newHeight;
+                UpdateFieldSize(windowHeight / rows, windowWidth / cols);
+            }
         });
 
         StackPane root = new StackPane();
         Game.root = root;
         root.setStyle("-fx-background-color: #000000;");
 
-        Scene scene = new Scene(root, Constants.WindowWidth, Constants.WindowHeight);
+        scene = new Scene(root, Constants.WindowWidth, Constants.WindowHeight);
         scene.setUserAgentStylesheet(getClass().getResource("style.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("PACMAN");
@@ -65,6 +68,8 @@ public class Game extends Application {
     }
 
     public static void main(String[] args) {
+        windowWidth = Constants.WindowWidth;
+        windowHeight = Constants.WindowHeight;
         processRunner = new ProcessRunner();
         mapParser = new MapParser();
         launch();
@@ -406,7 +411,6 @@ public class Game extends Application {
         keys = mapParserResult.keys();
         maze = new ICommonField[mapParserResult.rows()][mapParserResult.cols()];
         Game.gameGridPane = GetGameGridPane(100.0, 100.0, mapParserResult.rows(), mapParserResult.cols(), mapParserResult.fields());
-        Game.CommonObjectSize = min(Constants.WindowWidth / mapParserResult.cols(), Constants.WindowHeight / mapParserResult.rows());
         CreateObjectMap(mapParserResult.fields());
 
         vBox.getChildren().add(gameGridPane);
@@ -421,26 +425,27 @@ public class Game extends Application {
                 switch (fields[r][c])
                 {
                     case "T" -> {
-                        var object = new TargetObject(gameGridPane, r, c, Constants.WindowHeight / rows, Constants.WindowWidth / cols);
+                        var object = new TargetObject(gameGridPane, r, c, windowHeight / rows, windowWidth / cols);
                         maze[r][c] = new PathField(r,c, maze);
                         maze[r][c].Put(object);
                     }
                     case "G" -> {
                         maze[r][c] = new PathField(r,c, maze);
-                        var object = new GhostObject(gameGridPane, r, c, Constants.WindowHeight / rows, Constants.WindowWidth / cols, maze[r][c]);
-                        //object.start();
-                        processRunner.addProcess(object);
+                        var object = new GhostObject(gameGridPane, r, c, windowHeight / rows, windowWidth / cols, maze[r][c]);
+                        var thread = new Thread(object);
+                        processRunner.addProcess(thread);
                         maze[r][c].Put(object);
                     }
                     case "K" -> {
-                        var object = new KeyObject(gameGridPane, r, c, Constants.WindowHeight / rows, Constants.WindowWidth / cols);
+                        var object = new KeyObject(gameGridPane, r, c, windowHeight / rows, windowWidth / cols);
                         maze[r][c] = new PathField(r,c, maze);
                         maze[r][c].Put(object);
                     }
                     case "S" -> {
                         maze[r][c] = new PathField(r,c, maze);
-                        var object = new PacmanObject(gameGridPane, r, c, keys, Constants.WindowHeight / rows, Constants.WindowWidth / cols, maze[r][c]);
-                        //object.start();
+                        var object = new PacmanObject(gameGridPane, r, c, keys, windowHeight / rows, windowWidth / cols, maze[r][c], scene);
+                        var thread = new Thread(object);
+                        processRunner.addProcess(thread);
                         maze[r][c].Put(object);
                     }
                     case "." -> {
@@ -453,5 +458,23 @@ public class Game extends Application {
             }
         }
         processRunner.start();
+    }
+
+    private void UpdateFieldSize(double height, double width)
+    {
+        for(int r = 0; r < maze.length; r++)
+        {
+            for(int c = 0; c < maze[0].length; c++)
+            {
+                if(maze[r][c].IsPathField())
+                {
+                    var objects = maze[r][c].GetMazeObjects();
+                    for(int i = 0; i < objects.size(); i++)
+                    {
+                        objects.get(i).SetFieldSize(height, width);
+                    }
+                }
+            }
+        }
     }
 }

@@ -9,7 +9,7 @@ import javafx.scene.layout.GridPane;
 
 import java.util.*;
 
-public class GhostObject extends Thread implements ICommonMazeObject, Observer {
+public class GhostObject implements ICommonMazeObject, Observer, Runnable {
 
     private GridPane maze;
     private GhostView ghostView;
@@ -19,6 +19,7 @@ public class GhostObject extends Thread implements ICommonMazeObject, Observer {
     private int col;
     private Random random;
     private Direction actDirection;
+    private volatile boolean isStopped = false;
 
     public GhostObject(GridPane maze, int row, int col, double height, double width, ICommonField field) {
         this.maze = maze;
@@ -32,7 +33,13 @@ public class GhostObject extends Thread implements ICommonMazeObject, Observer {
 
     public void run()
     {
+        isStopped = false;
         Move();
+    }
+
+    public void stop()
+    {
+        isStopped = true;
     }
 
     @Override
@@ -65,6 +72,12 @@ public class GhostObject extends Thread implements ICommonMazeObject, Observer {
         return actField;
     }
 
+    @Override
+    public void SetFieldSize(double height, double width)
+    {
+        ghostView.SetFieldSize(height, width);
+    }
+
     public boolean CanMove(Direction direction)
     {
         if(actField.NextField(direction) != null)
@@ -80,6 +93,7 @@ public class GhostObject extends Thread implements ICommonMazeObject, Observer {
     public boolean Move()
     {
         actDirection = GetRandomPossibleDirectionWithoutOpposite();
+        if(actDirection == null) return false;
         newField = (PathField) actField.NextField(actDirection);
         ghostView.AnimatedMove(actDirection);
         return true;
@@ -91,9 +105,13 @@ public class GhostObject extends Thread implements ICommonMazeObject, Observer {
         actField.Remove(this);
         newField.Put(this);
         actField = newField;
-        actDirection = GetRandomPossibleDirectionWithoutOpposite();
-        newField = (PathField) actField.NextField(actDirection);
-        ghostView.AnimatedMove(actDirection);
+        if(!isStopped)
+        {
+            actDirection = GetRandomPossibleDirectionWithoutOpposite();
+            if(actDirection == null) return;
+            newField = (PathField) actField.NextField(actDirection);
+            ghostView.AnimatedMove(actDirection);
+        }
     }
 
     private Direction GetRandomPossibleDirectionWithoutOpposite()
@@ -118,6 +136,12 @@ public class GhostObject extends Thread implements ICommonMazeObject, Observer {
         if(CanMove(Direction.Right)) directions.add(Direction.Right);
         if(CanMove(Direction.Up)) directions.add(Direction.Up);
         if(CanMove(Direction.Down)) directions.add(Direction.Down);
+
+        if(directions.size() == 0)
+        {
+            stop();
+            return null;
+        }
 
         return directions.get(random.nextInt(directions.size()));
     }

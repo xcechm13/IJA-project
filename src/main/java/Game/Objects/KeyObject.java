@@ -50,4 +50,10 @@ public class KeyObject implements ICommonMazeObject {
         // TODO
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void SetFieldSize(double height, double width)
+    {
+        keyView.SetFieldSize(height, width);
+    }
 }

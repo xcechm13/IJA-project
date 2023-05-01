@@ -49,4 +49,9 @@ public class TargetObject implements ICommonMazeObject {
         // TODO
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void SetFieldSize(double height, double width) {
+        targetView.SetFieldSize(height, width);
+    }
 }
