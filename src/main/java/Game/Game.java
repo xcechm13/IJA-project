@@ -17,11 +17,9 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 public class Game extends Application {
 
@@ -389,6 +387,11 @@ public class Game extends Application {
     }
 
     private void OpenSubmenuReplay()
+    {
+
+    }
+
+    private void OpenSubmenuReplayMode()
     {
         menuVbox.getChildren().clear();
 
