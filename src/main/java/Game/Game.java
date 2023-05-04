@@ -6,6 +6,10 @@ import ConstantsEnums.FieldPixels;
 import Game.Fields.PathField;
 import Game.Fields.WallField;
 import Game.Objects.*;
+import Game.Records.LogName;
+import Game.Records.LoggerResult;
+import Game.Records.MapLoggerResult;
+import Game.Records.MapParserResult;
 import Interfaces.ICommonField;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -20,6 +24,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 public class Game extends Application {
 
@@ -619,8 +624,10 @@ public class Game extends Application {
                 }
             }
         }
+        LoggerRecorder saveLogs = new LoggerRecorder(maze);
         processRunner.runPacman();
         processRunner.runGhosts();
+        saveLogs.start();
     }
 
     public void ESCPressed() throws IOException

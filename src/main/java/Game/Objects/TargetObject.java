@@ -44,6 +44,11 @@ public class TargetObject implements ICommonMazeObject {
     }
 
     @Override
+    public boolean IsHome() {
+        return false;
+    }
+
+    @Override
     public ICommonField GetField()
     {
         // TODO

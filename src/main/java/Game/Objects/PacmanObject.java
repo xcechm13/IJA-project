@@ -101,6 +101,11 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
     }
 
     @Override
+    public boolean IsHome() {
+        return false;
+    }
+
+    @Override
     public ICommonField GetField()
     {
         return actField;
@@ -127,8 +132,17 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
 
     public int GetLives()
     {
-        // TODO
-        throw new UnsupportedOperationException();
+        return lives;
+    }
+
+    public int GetSteps()
+    {
+        return steps;
+    }
+
+    public Direction GetDirection()
+    {
+        return actDirection;
     }
 
     public void FindKey()
@@ -155,6 +169,7 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         if(CanMove(actDirection))
         {
             game.PacmanStep();
+            steps++;
             newField = (PathField) actField.NextField(actDirection);
             pacmanView.AnimatedMove(actDirection);
             return true;
@@ -222,6 +237,7 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
                 if(CanMove(reqDirection))
                 {
                     game.PacmanStep();
+                    steps++;
                     newField = (PathField) actField.NextField(reqDirection);
                     actDirection = reqDirection;
                     pacmanView.AnimatedMove(actDirection);
@@ -229,6 +245,7 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
                 else if(CanMove(actDirection))
                 {
                     game.PacmanStep();
+                    steps++;
                     newField = (PathField) actField.NextField(actDirection);
                     pacmanView.AnimatedMove(actDirection);
                 }
@@ -297,6 +314,7 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
             {
                 Moving = true;
                 game.PacmanStep();
+                steps++;
                 newField = (PathField) actField.NextField(reqDirection);
                 pacmanView.AnimatedMove(reqDirection);
             }
@@ -324,6 +342,7 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
             {
                 Moving = true;
                 game.PacmanStep();
+                steps++;
                 newField = (PathField) actField.NextField(actDirection);
                 pacmanView.AnimatedMove(actDirection);
             }

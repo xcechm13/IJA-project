@@ -13,4 +13,7 @@ public class Constants {
     public static final String TargetSource = "target.png";
     public static final double PacmanMoveDelay = 0.1;
     public static final double GhostMoveDelay = 0.5;
+
+    //zkusit log vzdy 2x rychleji nez je rychlost pacmana
+    public static int LoggerSpeed = (int) (1000 * PacmanMoveDelay / 2);
 }

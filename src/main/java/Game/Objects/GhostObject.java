@@ -67,6 +67,11 @@ public class GhostObject implements ICommonMazeObject, Observer, Runnable {
     }
 
     @Override
+    public boolean IsHome() {
+        return false;
+    }
+
+    @Override
     public ICommonField GetField()
     {
         return actField;
@@ -151,5 +156,10 @@ public class GhostObject implements ICommonMazeObject, Observer, Runnable {
         }
 
         return directions.get(random.nextInt(directions.size()));
+    }
+
+    public String GetGhostColorFromView()
+    {
+        return ghostView.GetGhostColor();
     }
 }

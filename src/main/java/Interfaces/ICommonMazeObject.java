@@ -10,6 +10,8 @@ public interface ICommonMazeObject {
 
     public boolean IsTarget();
 
+    public boolean IsHome();
+
     public ICommonField GetField();
 
     public void SetFieldSize(double height, double width);

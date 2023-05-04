@@ -41,6 +41,11 @@ public class HomeObject implements ICommonMazeObject {
     }
 
     @Override
+    public boolean IsHome() {
+        return true;
+    }
+
+    @Override
     public ICommonField GetField() {
         throw new UnsupportedOperationException();
     }

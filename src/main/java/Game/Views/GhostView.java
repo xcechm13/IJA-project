@@ -30,6 +30,8 @@ public class GhostView extends Observable implements ICommonMazeObjectView {
     private Timeline timeline;
     private Direction actDirection;
 
+    private String ghostColor;
+
     public GhostView(GridPane maze, int row, int col, double height, double width, GhostObject object)
     {
         this.maze = maze;
@@ -54,8 +56,8 @@ public class GhostView extends Observable implements ICommonMazeObjectView {
     @Override
     public synchronized ImageView CreateView()
     {
-        Image image = new Image(Constants.GhostSource[random.nextInt(4)]);
-        ImageView imageView = new ImageView(image);
+        ghostColor = Constants.GhostSource[random.nextInt(4)];
+        ImageView imageView = new ImageView(ghostColor);
         imageView.setFitWidth(min(width, height));
         imageView.setFitHeight(min(width, height));
         maze.getChildren().add(imageView);
@@ -69,6 +71,10 @@ public class GhostView extends Observable implements ICommonMazeObjectView {
         maze.getChildren().remove(imageView);
     }
 
+    public String GetGhostColor()
+    {
+        return ghostColor;
+    }
     public void AnimatedMove(Direction direction)
     {
         actDirection = direction;
