@@ -3,6 +3,7 @@ package Game;
 import Game.Records.LoggerResult;
 import Game.Views.*;
 import Interfaces.ICommonMazeObjectView;
+import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -186,18 +187,26 @@ public class LoggerPlayer implements Runnable{
 
     public void PlayForward() throws IOException {
         playing = true;
-        while (playing)
-        {
-            try {
-                sleep(2000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+        new Thread(() -> {
+            while (playing) {
+                try {
+                    Thread.sleep(400);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                Platform.runLater(() -> {
+                    try {
+                        StepForward();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (result == null) {
+                        playing = false;
+                    }
+                    System.out.println("PlayForward");
+                });
             }
-            StepForward();
-            if(result == null)
-                playing = false;
-            System.out.println("PlayForward");
-        }
+        }).start();
 
         /*while(true)
         {
