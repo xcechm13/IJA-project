@@ -10,7 +10,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 
-import java.util.Objects;
 import java.util.Random;
 import java.util.Observable;
 import static java.lang.Math.min;
@@ -19,6 +18,7 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
 
     private ImageView imageView;
     private GridPane maze;
+    private PacmanObject pacmanObject;
     private int row;
     private int col;
     private double height;
@@ -26,6 +26,7 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
     private Random random;
     private Timeline timeline;
     private Direction actDirection;
+    private boolean stopped;
 
     public PacmanView(GridPane maze, int row, int col, double height, double width, PacmanObject object) {
         this.maze = maze;
@@ -35,7 +36,9 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
         this.width = width;
         this.random = new Random();
         this.imageView = CreateView();
+        this.pacmanObject = object;
         this.addObserver(object);
+        this.stopped = false;
     }
 
     @Override
@@ -60,8 +63,19 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
         return imageView;
     }
 
+    @Override
+    public void RemoveView()
+    {
+        stopped = true;
+        this.deleteObservers();
+        maze.getChildren().remove(imageView);
+        if(timeline != null)
+            timeline.stop();
+    }
+
     public void AnimatedMove(Direction direction)
     {
+        if(stopped) return;
         actDirection = direction;
         switch (direction) {
             case Up -> {
@@ -88,7 +102,6 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
                     imageView.setImage(new Image(Constants.PacmanSource[5]));
                 }
 
-                //imageView.setImage(new Image(Constants.PacmanSource[Direction.Down.ordinal()]));
                 KeyValue keyValue = new KeyValue(imageView.translateYProperty(), height, Interpolator.LINEAR);
                 KeyFrame keyFrame = new KeyFrame(Duration.seconds(Constants.PacmanMoveDelay), keyValue);
                 timeline = new Timeline(keyFrame);
@@ -103,7 +116,6 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
                     imageView.setImage(new Image(Constants.PacmanSource[6]));
                 }
 
-                //imageView.setImage(new Image(Constants.PacmanSource[Direction.Left.ordinal()]));
                 KeyValue keyValue = new KeyValue(imageView.translateXProperty(), -width, Interpolator.LINEAR);
                 KeyFrame keyFrame = new KeyFrame(Duration.seconds(Constants.PacmanMoveDelay), keyValue);
                 timeline = new Timeline(keyFrame);
@@ -118,7 +130,6 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
                     imageView.setImage(new Image(Constants.PacmanSource[7]));
                 }
 
-                //imageView.setImage(new Image(Constants.PacmanSource[Direction.Right.ordinal()]));
                 KeyValue keyValue = new KeyValue(imageView.translateXProperty(), width, Interpolator.LINEAR);
                 KeyFrame keyFrame = new KeyFrame(Duration.seconds(Constants.PacmanMoveDelay), keyValue);
                 timeline = new Timeline(keyFrame);
@@ -130,6 +141,7 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
 
     private void AnimationCompleted()
     {
+        if(stopped) return;
         switch (actDirection) {
             case Up -> {
                 maze.setRowIndex(imageView, --row);
@@ -149,4 +161,5 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
         setChanged();
         notifyObservers();
     }
+
 }

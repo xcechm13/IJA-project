@@ -64,6 +64,11 @@ public class GhostView extends Observable implements ICommonMazeObjectView {
         return imageView;
     }
 
+    @Override
+    public void RemoveView() {
+        maze.getChildren().remove(imageView);
+    }
+
     public void AnimatedMove(Direction direction)
     {
         actDirection = direction;

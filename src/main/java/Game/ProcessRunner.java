@@ -1,34 +1,52 @@
 package Game;
 
 import Game.Objects.GhostObject;
+import Game.Objects.PacmanObject;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class ProcessRunner extends Thread{
 
-    private List<Thread> threads;
-    //private List<GhostObject> objects;
+    private List<Thread> ghostThreads;
+    private List<GhostObject> ghostObjects;
+    private Thread pacmanThread;
+    private PacmanObject pacmanObject;
 
     public ProcessRunner()
     {
-        threads = new ArrayList<>();
-        //objects = new ArrayList<>();
+        ghostThreads = new ArrayList<>();
+        ghostObjects = new ArrayList<>();
     }
 
-    //public void addProcess(Thread t, GhostObject o)
-    //{
-    //    threads.add(t);
-    //    objects.add(o);
-    //}
-
-    public void addProcess(Thread t)
+    public void addGhost(Thread t, GhostObject o)
     {
-        threads.add(t);
+        ghostThreads.add(t);
+        ghostObjects.add(o);
     }
 
-    public void run(){
-        for (Thread t : threads) {
+    public void setPacman(Thread t, PacmanObject o)
+    {
+        pacmanThread = t;
+        pacmanObject = o;
+    }
+
+    public void runPacman()
+    {
+        try {
+            sleep(75);
+            pacmanThread.start();
+        } catch (InterruptedException e) { }
+    }
+
+    public void Clear()
+    {
+        pacmanThread = null;
+        ghostThreads = new ArrayList<>();
+    }
+
+    public void runGhosts(){
+        for (Thread t : ghostThreads) {
             try {
                 sleep(75);
                 t.start();
@@ -59,6 +77,24 @@ public class ProcessRunner extends Thread{
 
         }*/
 
+    }
+
+    public void stopAll()
+    {
+        for(GhostObject t : ghostObjects)
+        {
+            t.stop();
+        }
+        pacmanObject.stop();
+    }
+
+    public void runAll()
+    {
+        for(GhostObject t : ghostObjects)
+        {
+            t.run();
+        }
+        pacmanObject.run();
     }
 
 }

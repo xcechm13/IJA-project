@@ -1,8 +1,6 @@
 .label
 {
-    -fx-text-fill: #FFFFFF;
-    -fx-background-color: #51F57A;
-    -fx-font-size: 15px;
+    -fx-font-family: "Comic Sans MS";
 }
 
 .gridPane

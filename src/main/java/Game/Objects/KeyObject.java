@@ -47,13 +47,12 @@ public class KeyObject implements ICommonMazeObject {
     @Override
     public ICommonField GetField()
     {
-        // TODO
         throw new UnsupportedOperationException();
     }
 
     public void RemoveFromMap()
     {
-        keyView.Remove();
+        keyView.RemoveView();
     }
 
     @Override

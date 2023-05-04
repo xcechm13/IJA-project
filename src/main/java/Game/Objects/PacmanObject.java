@@ -2,6 +2,7 @@ package Game.Objects;
 
 import ConstantsEnums.Direction;
 import Game.Fields.PathField;
+import Game.Game;
 import Game.Records.Point;
 import Game.Views.PacmanView;
 import Interfaces.ICommonField;
@@ -9,24 +10,24 @@ import Interfaces.ICommonMazeObject;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 
-import java.nio.file.Path;
+import java.io.IOException;
 import java.util.*;
 
 import static java.lang.Math.max;
+import static java.lang.Thread.sleep;
 
 public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
 
     private int row;
     private int col;
-    private static GridPane maze;
+    private GridPane maze;
     private int lives;
     private int foundKeys;
     private int totalKeys;
     private int steps;
     private PacmanView pacmanView;
-    private static PathField actField;
+    private PathField actField;
     private PathField newField;
     private PathField startingField;
     private Scene scene;
@@ -39,22 +40,24 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
     Direction actDirection;
     Direction reqDirection;
     Random random;
+    Game game;
     private volatile boolean isStopped = false;
     int pathIndex = 0;
 
-    public PacmanObject(GridPane maze, int row, int col, int totalKeys, double height, double width, ICommonField field, Scene scene)
+    public PacmanObject(GridPane maze, int row, int col, int lives, int totalKeys, int foundKeys, int steps, double height, double width, ICommonField field, Scene scene, Game game)
     {
         this.row = row;
         this.col = col;
         this.maze = maze;
         this.actField = (PathField) field;
         this.startingField = (PathField) field;
-        this.lives = 3;
-        this.foundKeys = 0;
+        this.lives = lives;
+        this.foundKeys = foundKeys;
         this.totalKeys = totalKeys;
         this.steps = 0;
         this.pacmanView = new PacmanView(maze, row, col, height, width, this);
         this.scene = scene;
+        this.game = game;
         random = new Random();
         actDirection = GetRandomDirection();
         reqDirection = actDirection;
@@ -111,6 +114,7 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
 
     public boolean CanMove(Direction direction)
     {
+        if(isStopped) return false;
         if(actField.NextField(direction) != null)
         {
             if(actField.NextField(direction).IsPathField())
@@ -132,6 +136,11 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         foundKeys++;
     }
 
+    public void PacmanOnTarget()
+    {
+        game.PacmanWin();
+    }
+
     public boolean AllKeysFound()
     {
         if (foundKeys == totalKeys)
@@ -145,6 +154,7 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
     {
         if(CanMove(actDirection))
         {
+            game.PacmanStep();
             newField = (PathField) actField.NextField(actDirection);
             pacmanView.AnimatedMove(actDirection);
             return true;
@@ -156,69 +166,69 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
     @Override
     public void update(Observable o, Object arg) {
 
-        if(o instanceof  PathField)
+        if(o instanceof PathField)
         {
-            List<ICommonMazeObject> objectsOnField = actField.GetMazeObjects();
-            //boolean obsahuje = false;
-
-            /*for (ICommonMazeObject potentionalGhost: objectsOnField)
+            boolean ghostOnField = false;
+            for(var object : ((PathField)o).GetMazeObjects())
             {
-                if(potentionalGhost.IsPacman()) {
-                    System.out.println("obsahuje pacmana: ");
-                }
-            }*/
-
-            for (ICommonMazeObject potentionalGhost: objectsOnField)
-            {
-                if(potentionalGhost.IsGhost())
+                if(object instanceof GhostObject)
                 {
-                    //ODKOMENT HERE
-                    lives--;
-                    System.out.println("pocet zivotu: " + lives);
-                    //actField.Remove(this);
-                    //startingField.Put(this);
-                    //actField = startingField;
-                    //actDirection = GetRandomDirection();
-                    //reqDirection = actDirection;
+                    ghostOnField = true;
                     break;
                 }
             }
-            //System.out.println("pocet zivotu: " + lives);
+            if(!ghostOnField) return;
+
+            if(isStopped || (actField.row == startingField.row && actField.col == startingField.col)) return;
+            lives--;
+            System.out.println("pocet zivotu: " + lives);
+            pacmanView.RemoveView();
+            isStopped = true;
+            //pacmanView = null;
+            actField.Remove(this);
+            if(newField != null)
+                newField.Remove(this);
+            startingField.Put(this);
+            actField = startingField;
+            try {
+                game.PacmanDead(lives, totalKeys, foundKeys, steps);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         else
         {
-            //System.out.println(reqDirection);
-
-        actField.Remove(this);
-        //actField = newField; //TODO DEL
-        newField.Put(this);
-        actField = newField;
-        if(!isStopped)
-        {
-            if(GotoFieldActive)
+            actField.Remove(this);
+            newField.Put(this);
+            actField = newField;
+            if(!isStopped)
             {
-                if(actField.row == GotoFieldRow && actField.col == GotoFieldCol)
+                if(GotoFieldActive)
                 {
-                    reqDirection = actDirection;
-                    GotoFieldActive = false;
-                }
-                else
-                {
-                    try {
-                        reqDirection = path.get(pathIndex++);
-                    }catch (Exception e){}
+                    if(actField.row == GotoFieldRow && actField.col == GotoFieldCol)
+                    {
+                        reqDirection = actDirection;
+                        GotoFieldActive = false;
+                    }
+                    else
+                    {
+                        try {
+                            reqDirection = path.get(pathIndex++);
+                        }catch (Exception e){}
 
+                    }
                 }
-            }
 
                 if(CanMove(reqDirection))
                 {
+                    game.PacmanStep();
                     newField = (PathField) actField.NextField(reqDirection);
                     actDirection = reqDirection;
                     pacmanView.AnimatedMove(actDirection);
                 }
                 else if(CanMove(actDirection))
                 {
+                    game.PacmanStep();
                     newField = (PathField) actField.NextField(actDirection);
                     pacmanView.AnimatedMove(actDirection);
                 }
@@ -246,15 +256,23 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
                 case D, RIGHT -> {
                     ChangeCurrentDirection(Direction.Right);
                 }
+                case ESCAPE -> {
+                    try {
+                        game.ESCPressed();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
             }
         });
 
 
 
         maze.setOnMouseClicked(e -> {
+            System.out.println("here");
             Node clickedNode = e.getPickResult().getIntersectedNode();
             // kliklo se na pathfield?
-            if(clickedNode.getParent().getParent().getParent() instanceof StackPane)
+            if(clickedNode.getParent().getParent().getParent() == null)
             {
                 Integer columnIndex = maze.getColumnIndex(clickedNode);
                 Integer rowIndex = maze.getRowIndex(clickedNode);
@@ -265,12 +283,12 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
 
     private Direction GetRandomDirection()
     {
-        var a = GetField();
         return Direction.values()[random.nextInt(4)];
     }
 
     private void ChangeCurrentDirection(Direction direction)
     {
+        GotoFieldActive = false;
         reqDirection = direction;
         if(!Moving)
         {
@@ -278,6 +296,7 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
             if(CanMove(reqDirection))
             {
                 Moving = true;
+                game.PacmanStep();
                 newField = (PathField) actField.NextField(reqDirection);
                 pacmanView.AnimatedMove(reqDirection);
             }
@@ -304,6 +323,7 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
             if(CanMove(actDirection))
             {
                 Moving = true;
+                game.PacmanStep();
                 newField = (PathField) actField.NextField(actDirection);
                 pacmanView.AnimatedMove(actDirection);
             }

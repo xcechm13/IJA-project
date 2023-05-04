@@ -7,4 +7,6 @@ public interface ICommonMazeObjectView {
     public void SetFieldSize(double height, double width);
 
     public ImageView CreateView();
+
+    public void RemoveView();
 }

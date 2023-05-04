@@ -5,7 +5,7 @@
 .X.XXX.XXXXXXX.XXXXXXXXX.X..XXXXXXXX.
 .X.XKX.X...............X.X.X.........
 .X.X.X.XXXXX.XXXXXXXXX.X.X.XXXXXXXXX.
-.X.G...X.....X....G..X.....X.......X.
+.X.G...X.....X....GT.X.....X.......X.
 .XXXXXXX.XXX.X.XXXXX.XXXXXXX.X.XXXXX.
 .......X...X.XK....X.........X.....X.
 .XXXXX.XXX.X.XXXXX.XXXXXXXXXXX.XXXXX.

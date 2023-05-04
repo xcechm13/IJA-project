@@ -42,58 +42,66 @@ public class PathField extends Observable implements ICommonField {
     @Override
     public void Put(ICommonMazeObject object)
     {
-        if(Contains(object))
+        synchronized (MazeObjects)
         {
-            throw new UnsupportedOperationException();
-        }
-
-        MazeObjects.add(object);
-        if(object.IsPacman())
-        {
-            this.addObserver((PacmanObject)object);
-            setChanged();
-            notifyObservers();
-
-            for (ICommonMazeObject o: MazeObjects)
+            if(Contains(object))
             {
-                if(o.IsKey())
+                throw new UnsupportedOperationException();
+            }
+
+            MazeObjects.add(object);
+            if(object.IsPacman())
+            {
+                this.addObserver((PacmanObject)object);
+
+                for (ICommonMazeObject o: MazeObjects)
                 {
-                    Remove(o);
-                    ((KeyObject) o).RemoveFromMap();
-                    ((PacmanObject) object).FindKey();
+                    if(o.IsKey())
+                    {
+                        Remove(o);
+                        ((KeyObject) o).RemoveFromMap();
+                        ((PacmanObject) object).FindKey();
+                    }
+
+                    if(o.IsTarget() && ((PacmanObject) object).AllKeysFound())
+                    {
+                        ((PacmanObject) object).PacmanOnTarget();
+                        System.out.println("VYHRAL JSI");
+                    }
                 }
 
-                if(o.IsTarget() && ((PacmanObject) object).AllKeysFound())
-                {
-                    System.out.println("VYHRAL JSI");
-                }
+                setChanged();
+                notifyObservers();
             }
-        }
-        else if(object.IsGhost())
-        {
-            this.addObserver((GhostObject)object);
-            setChanged();
-            notifyObservers();
+            else if(object.IsGhost())
+            {
+                this.addObserver((GhostObject)object);
+                setChanged();
+                notifyObservers();
+            }
         }
     }
 
     @Override
     public void Remove(ICommonMazeObject object)
     {
-        if(!Contains(object))
+        synchronized (MazeObjects)
         {
-            throw new UnsupportedOperationException();
-        }
+            if(!Contains(object))
+            {
+                return;
+            }
 
-        if(object.IsPacman())
-        {
-            this.deleteObserver((PacmanObject)object);
+            if(object.IsPacman())
+            {
+                this.deleteObserver((PacmanObject)object);
+            }
+            else if(object.IsGhost())
+            {
+                this.deleteObserver((GhostObject)object);
+            }
+            MazeObjects.remove(object);
         }
-        else if(object.IsGhost())
-        {
-            this.deleteObserver((GhostObject)object);
-        }
-        MazeObjects.remove(object);
     }
 
     @Override

@@ -48,8 +48,9 @@ public class KeyView implements ICommonMazeObjectView {
         return imageView;
     }
 
-    public void Remove()
-    {
+    @Override
+    public void RemoveView() {
         maze.getChildren().remove(imageView);
     }
+
 }
