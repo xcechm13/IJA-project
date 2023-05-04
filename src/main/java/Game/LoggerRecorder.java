@@ -20,23 +20,33 @@ import java.util.stream.Stream;
 
 import ConstantsEnums.Constants;
 
+import static java.lang.Thread.sleep;
 
-public class LoggerRecorder extends Thread {
+
+public class LoggerRecorder implements Runnable{
 
     public int logIncrement;
     public String logFolderPath;
     public String logFilePath;
     private ICommonField[][] maze;
+    private boolean isRecording;
 
     public LoggerRecorder(ICommonField[][] mazeIn) {
         logIncrement = 0;
         logFolderPath = Paths.get("data", "logs").toString();
         logFilePath = Paths.get(logFolderPath, "game" + logIncrement + ".log").toString();
         maze = mazeIn;
+        isRecording = false;
+    }
+
+    public void stop()
+    {
+        isRecording = false;
     }
 
     @Override
     public void run() {
+        isRecording = true;
         logIncrement = 0;
 
         int logFileNum = 0;
@@ -62,7 +72,7 @@ public class LoggerRecorder extends Thread {
         logFolderPath = Paths.get("data", "logs", dirName).toString();
         boolean dateSet = false;
         String datebuff = "";
-        while (logIncrement < 50) {
+        while (isRecording) {
             logFilePath = Paths.get(logFolderPath, "game" + logIncrement + ".log").toString();
             try (PrintWriter writer = new PrintWriter(new FileOutputStream(logFilePath, false))) {
                 //SaveLOG

@@ -8,6 +8,7 @@ import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -29,10 +30,9 @@ public class GhostView extends Observable implements ICommonMazeObjectView {
     private Random random;
     private Timeline timeline;
     private Direction actDirection;
+    private String imageSource;
 
-    private String ghostColor;
-
-    public GhostView(GridPane maze, int row, int col, double height, double width, GhostObject object)
+    public GhostView(GridPane maze, int row, int col, double height, double width, GhostObject object, String ImageSource)
     {
         this.maze = maze;
         this.row = row;
@@ -40,8 +40,10 @@ public class GhostView extends Observable implements ICommonMazeObjectView {
         this.height = height;
         this.width = width;
         this.random = new Random();
+        this.imageSource = ImageSource;
         this.imageView = CreateView();
-        this.addObserver(object);
+        if(object != null)
+            this.addObserver(object);
     }
 
     @Override
@@ -56,11 +58,17 @@ public class GhostView extends Observable implements ICommonMazeObjectView {
     @Override
     public synchronized ImageView CreateView()
     {
-        ghostColor = Constants.GhostSource[random.nextInt(4)];
-        ImageView imageView = new ImageView(ghostColor);
+        imageSource = imageSource == null ? Constants.GhostSource[random.nextInt(4)] : imageSource;
+        Image image = new Image(imageSource);
+        ImageView imageView = new ImageView(image);
         imageView.setFitWidth(min(width, height));
         imageView.setFitHeight(min(width, height));
-        maze.getChildren().add(imageView);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                maze.getChildren().add(imageView);
+            }
+        });
         maze.setRowIndex(imageView, row);
         maze.setColumnIndex(imageView, col);
         return imageView;
@@ -73,8 +81,9 @@ public class GhostView extends Observable implements ICommonMazeObjectView {
 
     public String GetGhostColor()
     {
-        return ghostColor;
+        return imageSource;
     }
+
     public void AnimatedMove(Direction direction)
     {
         actDirection = direction;

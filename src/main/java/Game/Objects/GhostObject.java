@@ -25,7 +25,7 @@ public class GhostObject implements ICommonMazeObject, Observer, Runnable {
         this.maze = maze;
         this.row = row;
         this.col = col;
-        this.ghostView = new GhostView(maze, row, col, height, width, this);
+        this.ghostView = new GhostView(maze, row, col, height, width, this, null);
         this.actField = (PathField)field;
         random = new Random();
         actDirection = GetRandomPossibleDirection();

@@ -12,11 +12,19 @@ public class ProcessRunner extends Thread{
     private List<GhostObject> ghostObjects;
     private Thread pacmanThread;
     private PacmanObject pacmanObject;
+    private Thread recorderThread;
+    private LoggerRecorder loggerRecorder;
 
     public ProcessRunner()
     {
         ghostThreads = new ArrayList<>();
         ghostObjects = new ArrayList<>();
+    }
+
+    public void addRecorder(Thread t, LoggerRecorder r)
+    {
+        recorderThread = t;
+        loggerRecorder = r;
     }
 
     public void addGhost(Thread t, GhostObject o)
@@ -31,17 +39,10 @@ public class ProcessRunner extends Thread{
         pacmanObject = o;
     }
 
-    public void runPacman()
-    {
-        try {
-            sleep(75);
-            pacmanThread.start();
-        } catch (InterruptedException e) { }
-    }
-
     public void Clear()
     {
         pacmanThread = null;
+        recorderThread = null;
         ghostThreads = new ArrayList<>();
     }
 
@@ -53,33 +54,30 @@ public class ProcessRunner extends Thread{
             } catch (InterruptedException e) {
             }
         }
-
-        /*
-        while(true)
-        {
-            try {
-                sleep(1000);
-            } catch (InterruptedException e) {}
-
-            for(int i=0; i<objects.size(); i++)
-            {
-                objects.get(i).stop();
-            }
-
-            try {
-                sleep(1000);
-            } catch (InterruptedException e) {}
-
-            for(int i=0; i<objects.size(); i++)
-            {
-                objects.get(i).run();
-            }
-
-        }*/
-
     }
 
-    public void stopAll()
+    public void runPacman()
+    {
+        try {
+            sleep(75);
+            pacmanThread.start();
+        } catch (InterruptedException e) { }
+    }
+
+    public void runRecorder()
+    {
+        try {
+            sleep(75);
+            recorderThread.start();
+        } catch (InterruptedException e) { }
+    }
+
+    public void stopRecorder()
+    {
+        loggerRecorder.stop();
+    }
+
+    public void stopAllObjects()
     {
         for(GhostObject t : ghostObjects)
         {
@@ -88,7 +86,7 @@ public class ProcessRunner extends Thread{
         pacmanObject.stop();
     }
 
-    public void runAll()
+    public void runAllObjects()
     {
         for(GhostObject t : ghostObjects)
         {

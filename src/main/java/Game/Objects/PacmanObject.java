@@ -49,13 +49,13 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         this.row = row;
         this.col = col;
         this.maze = maze;
+        this.steps = steps;
         this.actField = (PathField) field;
         this.startingField = (PathField) field;
         this.lives = lives;
         this.foundKeys = foundKeys;
         this.totalKeys = totalKeys;
-        this.steps = 0;
-        this.pacmanView = new PacmanView(maze, row, col, height, width, this);
+        this.pacmanView = new PacmanView(maze, row, col, height, width, this, null);
         this.scene = scene;
         this.game = game;
         random = new Random();
@@ -206,6 +206,7 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
             startingField.Put(this);
             actField = startingField;
             try {
+                //startingField.Remove(this);
                 game.PacmanDead(lives, totalKeys, foundKeys, steps);
             } catch (IOException e) {
                 throw new RuntimeException(e);

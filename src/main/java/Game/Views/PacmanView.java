@@ -5,6 +5,7 @@ import ConstantsEnums.Direction;
 import Game.Objects.PacmanObject;
 import Interfaces.ICommonMazeObjectView;
 import javafx.animation.*;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -27,18 +28,21 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
     private Timeline timeline;
     private Direction actDirection;
     private boolean stopped;
+    private String imageSource;
 
-    public PacmanView(GridPane maze, int row, int col, double height, double width, PacmanObject object) {
+    public PacmanView(GridPane maze, int row, int col, double height, double width, PacmanObject object, String ImageSource) {
         this.maze = maze;
         this.row = row;
         this.col = col;
         this.height = height;
         this.width = width;
         this.random = new Random();
-        this.imageView = CreateView();
         this.pacmanObject = object;
-        this.addObserver(object);
         this.stopped = false;
+        this.imageSource = ImageSource;
+        this.imageView = CreateView();
+        if(object != null)
+            this.addObserver(object);
     }
 
     @Override
@@ -53,11 +57,17 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
     @Override
     public ImageView CreateView()
     {
-        Image image = new Image(Constants.PacmanSource[0]);
+        imageSource = imageSource == null ? Constants.PacmanSource[0] : imageSource;
+        Image image = new Image(imageSource);
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(min(width, height));
         imageView.setFitHeight(min(width, height));
-        maze.getChildren().add(imageView);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                maze.getChildren().add(imageView);
+            }
+        });
         maze.setRowIndex(imageView, row);
         maze.setColumnIndex(imageView, col);
         return imageView;

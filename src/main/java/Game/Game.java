@@ -6,10 +6,7 @@ import ConstantsEnums.FieldPixels;
 import Game.Fields.PathField;
 import Game.Fields.WallField;
 import Game.Objects.*;
-import Game.Records.LogName;
 import Game.Records.LoggerResult;
-import Game.Records.MapLoggerResult;
-import Game.Records.MapParserResult;
 import Interfaces.ICommonField;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -18,17 +15,19 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 
 public class Game extends Application {
 
     private static MapParser mapParser;
+    private static Logger logger;
+    private static LoggerPlayer loggerPlayer;
     private StackPane root;
     private GridPane gameGridPane;
     private StackPane topGameMenu;
@@ -52,13 +51,19 @@ public class Game extends Application {
     private boolean gameOpen = false;
     private boolean gameStopped = false;
     private boolean gameFinished = false;
+    private boolean loggerPlayerOpened = false;
     private VBox menuVbox;
+    private String selectedLog;
 
 
     @Override
     public void start(Stage stage) throws IOException
     {
         stage.widthProperty().addListener((observableValue, oldWidth, newWidth) -> {
+            if(loggerPlayerOpened)
+            {
+                loggerPlayer.UpdateSize(windowHeight*0.8 / rows, (double)newWidth / cols);
+            }
             if(!Double.isNaN((double)oldWidth))
             {
                 windowWidth = (double)newWidth;
@@ -69,6 +74,10 @@ public class Game extends Application {
             }
         });
         stage.heightProperty().addListener((observableValue, oldHeight, newHeight) -> {
+            if(loggerPlayerOpened)
+            {
+                loggerPlayer.UpdateSize((double)newHeight*0.8 / rows, windowWidth / cols);
+            }
             if(!Double.isNaN((double)oldHeight))
             {
                 windowHeight = (double)newHeight;
@@ -276,27 +285,15 @@ public class Game extends Application {
         return GridPane;
     }
 
-    private void LoadReplay()
-    {
-        // TODO PŘEPNOUT SE NA PŘEHRÁVÁNÍ POSLEDNÍ HRY
-        System.out.println("Přehrávání poslední hry.");
-    }
-
     private void LoadGame(int mapNumber) throws IOException {
         OpenGame(mapNumber);
         System.out.println("Byla vybrána mapa č. " + mapNumber + ".");
     }
 
-    private void Run()
-    {
-        // TODO
-        throw new UnsupportedOperationException();
-    }
-
     private void OpenMainMenu()
     {
-        String[] mapNames = {"Map 1", "Map 2", "Map 3", "Map 4", "Back"};
         root.getChildren().clear();
+        loggerPlayerOpened = false;
 
         VBox commonMenuVbox = new VBox();
         commonMenuVbox.setPadding(new Insets(10, 0, 0, 0));
@@ -310,7 +307,7 @@ public class Game extends Application {
         menuVbox.setAlignment(Pos.TOP_CENTER);
 
         /****** PLAY ******/
-        Label menuLabel1 = new Label("Play");
+        Label menuLabel1 = new Label("PLAY");
         menuLabel1.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 30; -fx-font-weight: 700;");
         menuLabel1.setCursor(Cursor.HAND);
         menuLabel1.setOnMouseEntered(e -> {
@@ -321,11 +318,10 @@ public class Game extends Application {
         });
         menuLabel1.setOnMouseClicked(e -> {
             OpenSubmenuPlay();
-            System.out.println("play");
         });
 
         /****** REPLAY LAST GAME ******/
-        Label menuLabel2 = new Label("Replay last game");
+        Label menuLabel2 = new Label("REPLAY GAME");
         menuLabel2.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 30; -fx-font-weight: 700;");
         menuLabel2.setCursor(Cursor.HAND);
         menuLabel2.setOnMouseEntered(e -> {
@@ -336,12 +332,11 @@ public class Game extends Application {
         });
         menuLabel2.setOnMouseClicked(e -> {
             OpenSubmenuReplay();
-            System.out.println("replay");
         });
 
 
         /****** EXIT GAME ******/
-        Label menuLabel3 = new Label("Exit game");
+        Label menuLabel3 = new Label("EXIT GAME");
         menuLabel3.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 30; -fx-font-weight: 700;");
         menuLabel3.setCursor(Cursor.HAND);
         menuLabel3.setOnMouseEntered(e -> {
@@ -382,10 +377,18 @@ public class Game extends Application {
         menuGhostsImages.getChildren().addAll(redGhost, blueGhost, yellowGhost, pinkGhost, pacman);
 
 
+        ScrollPane scrollpane = new ScrollPane(menuVbox);
+        //scrollpane.setStyle("-fx-background-color: #123456");
+        //menuVbox.setStyle("-fx-background-color: #654321");
+        //scrollpane.setMinHeight(210);
+        scrollpane.setPadding(new Insets(180, 0, 60, 0));
+        scrollpane.setFitToWidth(true);
+
 
         commonMenuVbox.getChildren().add(Logo);
         root.getChildren().add(commonMenuVbox);
-        root.getChildren().add(menuVbox);
+        root.getChildren().add(scrollpane);
+        root.setAlignment(scrollpane, Pos.CENTER);
         root.getChildren().add(menuGhostsImages);
         root.setAlignment(menuGhostsImages, Pos.BOTTOM_CENTER);
 
@@ -393,7 +396,46 @@ public class Game extends Application {
 
     private void OpenSubmenuReplay()
     {
+        menuVbox.getChildren().clear();
 
+        logger = new Logger();
+        var logNames = logger.GetLogs();
+
+        for(int i=0; i<logNames.size(); i++)
+        {
+            var index = i;
+            Label mapLabel = new Label(logNames.get(i).logDateTime());
+            mapLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 25; -fx-font-weight: 700;");
+            mapLabel.setCursor(Cursor.HAND);
+            mapLabel.setOnMouseEntered(e -> {
+                mapLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #FCD56A; -fx-font-size: 25; -fx-font-weight: 700;");
+            });
+            mapLabel.setOnMouseExited(e -> {
+                mapLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 25; -fx-font-weight: 700;");
+            });
+            mapLabel.setOnMouseClicked(e -> {
+                OpenSubmenuReplayMode();
+                selectedLog = logNames.get(index).logFileName();
+            });
+            menuVbox.getChildren().add(mapLabel);
+        }
+
+
+        /****** BACK ******/
+        Label menuLabelBack = new Label("BACK");
+        menuLabelBack.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 30; -fx-font-weight: 700;");
+        menuLabelBack.setCursor(Cursor.HAND);
+        menuLabelBack.setOnMouseEntered(e -> {
+            menuLabelBack.setStyle("-fx-background-color: transparent; -fx-text-fill: #FCD56A; -fx-font-size: 30; -fx-font-weight: 700;");
+        });
+        menuLabelBack.setOnMouseExited(e -> {
+            menuLabelBack.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 30; -fx-font-weight: 700;");
+        });
+        menuLabelBack.setOnMouseClicked(e -> {
+            OpenMainMenu();
+        });
+
+        menuVbox.getChildren().addAll(menuLabelBack);
     }
 
     private void OpenSubmenuReplayMode()
@@ -402,34 +444,42 @@ public class Game extends Application {
 
         /****** REPLAY FROM START ******/
         Label menuLabel1 = new Label("Replay from start");
-        menuLabel1.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 30; -fx-font-weight: 700;");
+        menuLabel1.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 25; -fx-font-weight: 700;");
         menuLabel1.setCursor(Cursor.HAND);
         menuLabel1.setOnMouseEntered(e -> {
-            menuLabel1.setStyle("-fx-background-color: transparent; -fx-text-fill: #FCD56A; -fx-font-size: 30; -fx-font-weight: 700;");
+            menuLabel1.setStyle("-fx-background-color: transparent; -fx-text-fill: #FCD56A; -fx-font-size: 25; -fx-font-weight: 700;");
         });
         menuLabel1.setOnMouseExited(e -> {
-            menuLabel1.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 30; -fx-font-weight: 700;");
+            menuLabel1.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 25; -fx-font-weight: 700;");
         });
         menuLabel1.setOnMouseClicked(e -> {
-            System.out.println("replay from start TODO");
+            try {
+                OpenLogger(logger.LoadLog(selectedLog, true));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
         /****** REPLAY FROM END ******/
         Label menuLabel2 = new Label("Replay from end");
-        menuLabel2.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 30; -fx-font-weight: 700;");
+        menuLabel2.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 25; -fx-font-weight: 700;");
         menuLabel2.setCursor(Cursor.HAND);
         menuLabel2.setOnMouseEntered(e -> {
-            menuLabel2.setStyle("-fx-background-color: transparent; -fx-text-fill: #FCD56A; -fx-font-size: 30; -fx-font-weight: 700;");
+            menuLabel2.setStyle("-fx-background-color: transparent; -fx-text-fill: #FCD56A; -fx-font-size: 25; -fx-font-weight: 700;");
         });
         menuLabel2.setOnMouseExited(e -> {
-            menuLabel2.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 30; -fx-font-weight: 700;");
+            menuLabel2.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 25; -fx-font-weight: 700;");
         });
         menuLabel2.setOnMouseClicked(e -> {
-            System.out.println("replay from end TODO");
+            try {
+                OpenLogger(logger.LoadLog(selectedLog, false));
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
         /****** BACK ******/
-        Label menuLabel3 = new Label("Back");
+        Label menuLabel3 = new Label("BACK");
         menuLabel3.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 30; -fx-font-weight: 700;");
         menuLabel3.setCursor(Cursor.HAND);
         menuLabel3.setOnMouseEntered(e -> {
@@ -439,8 +489,7 @@ public class Game extends Application {
             menuLabel3.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 30; -fx-font-weight: 700;");
         });
         menuLabel3.setOnMouseClicked(e -> {
-            OpenMainMenu();
-            System.out.println("back");
+            OpenSubmenuReplay();
         });
 
         menuVbox.getChildren().addAll(menuLabel1, menuLabel2, menuLabel3);
@@ -455,13 +504,13 @@ public class Game extends Application {
         {
             var mapID = i;
             Label mapLabel = new Label(mapNames[i]);
-            mapLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 30; -fx-font-weight: 700;");
+            mapLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 25; -fx-font-weight: 700;");
             mapLabel.setCursor(Cursor.HAND);
             mapLabel.setOnMouseEntered(e -> {
-                mapLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #FCD56A; -fx-font-size: 30; -fx-font-weight: 700;");
+                mapLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #FCD56A; -fx-font-size: 25; -fx-font-weight: 700;");
             });
             mapLabel.setOnMouseExited(e -> {
-                mapLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 30; -fx-font-weight: 700;");
+                mapLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 25; -fx-font-weight: 700;");
             });
             mapLabel.setOnMouseClicked(e -> {
                 try {
@@ -469,14 +518,13 @@ public class Game extends Application {
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
-                System.out.println("back");
             });
             menuVbox.getChildren().add(mapLabel);
         }
 
 
         /****** BACK ******/
-        Label menuLabelBack = new Label("Back");
+        Label menuLabelBack = new Label("BACK");
         menuLabelBack.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 30; -fx-font-weight: 700;");
         menuLabelBack.setCursor(Cursor.HAND);
         menuLabelBack.setOnMouseEntered(e -> {
@@ -487,7 +535,6 @@ public class Game extends Application {
         });
         menuLabelBack.setOnMouseClicked(e -> {
             OpenMainMenu();
-            System.out.println("back");
         });
 
         menuVbox.getChildren().add(menuLabelBack);
@@ -524,9 +571,10 @@ public class Game extends Application {
         goToMenu.setStyle("-fx-text-fill: #FFFFFF; -fx-font-size: 30; -fx-font-weight: bold;");
         goToMenu.setCursor(Cursor.HAND);
         goToMenu.setOnMouseClicked(e -> {
+            processRunner.stopRecorder();
             gameOpen = false;
             gameFinished = true;
-            processRunner.stopAll();
+            processRunner.stopAllObjects();
             processRunner.Clear();
             OpenMainMenu();
         });
@@ -536,6 +584,7 @@ public class Game extends Application {
         playPause = new ImageView(new Image("pause.png"));
         playPause.setFitHeight(25);
         playPause.setFitWidth(25);
+        playPause.setCursor(Cursor.HAND);
         playPause.setOnMouseClicked(e -> {
             try {
                 ESCPressed();
@@ -624,10 +673,13 @@ public class Game extends Application {
                 }
             }
         }
-        LoggerRecorder saveLogs = new LoggerRecorder(maze);
+        var loggerRecorder = new LoggerRecorder(maze);
+        Thread loggerRecorderThread = new Thread(loggerRecorder);
+        processRunner.addRecorder(loggerRecorderThread, loggerRecorder);
+
+        processRunner.runRecorder();
         processRunner.runPacman();
         processRunner.runGhosts();
-        saveLogs.start();
     }
 
     public void ESCPressed() throws IOException
@@ -644,11 +696,11 @@ public class Game extends Application {
         if(gameStopped)
         {
             gameStopped = false;
-            System.out.println("play");
             topGameMenu.getChildren().remove(playPause);
             playPause = new ImageView(new Image("pause.png"));
             playPause.setFitHeight(25);
             playPause.setFitWidth(25);
+            playPause.setCursor(Cursor.HAND);
             playPause.setOnMouseClicked(e -> {
                 try {
                     ESCPressed();
@@ -659,16 +711,16 @@ public class Game extends Application {
             gameStatusLabel.setVisible(false);
             topGameMenu.getChildren().add(playPause);
             topGameMenu.setAlignment(playPause, Pos.CENTER);
-            processRunner.runAll();
+            processRunner.runAllObjects();
         }
         else
         {
             gameStopped = true;
-            System.out.println("pause");
             topGameMenu.getChildren().remove(playPause);
             playPause = new ImageView(new Image("play.png"));
             playPause.setFitHeight(25);
             playPause.setFitWidth(25);
+            playPause.setCursor(Cursor.HAND);
             playPause.setOnMouseClicked(e -> {
                 try {
                     ESCPressed();
@@ -678,7 +730,7 @@ public class Game extends Application {
             });
             topGameMenu.getChildren().add(playPause);
             topGameMenu.setAlignment(playPause, Pos.CENTER);
-            processRunner.stopAll();
+            processRunner.stopAllObjects();
             gameStatusLabel.setText("PAUSE");
             gameStatusLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #FEF900; -fx-font-size: 70; -fx-font-weight: bold;");
             gameStatusLabel.setVisible(true);
@@ -709,9 +761,10 @@ public class Game extends Application {
         bottomGameMenu.getChildren().remove(0);
         if(lives == 0)
         {
+            processRunner.stopRecorder();
             gameOpen = false;
             gameFinished = true;
-            processRunner.stopAll();
+            processRunner.stopAllObjects();
             gameStatusLabel.setText("GAME OVER");
             gameStatusLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #FF0000; -fx-font-size: 70; -fx-font-weight: bold;");
             gameStatusLabel.setVisible(true);
@@ -727,9 +780,10 @@ public class Game extends Application {
 
     public void PacmanWin()
     {
+        processRunner.stopRecorder();
         gameOpen = false;
         gameFinished = true;
-        processRunner.stopAll();
+        processRunner.stopAllObjects();
         gameStatusLabel.setText("YOU WIN !");
         gameStatusLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #FEF900; -fx-font-size: 70; -fx-font-weight: bold;");
         gameStatusLabel.setVisible(true);
@@ -737,12 +791,146 @@ public class Game extends Application {
 
     public void PacmanStep()
     {
-        nSteps.setText((++pacmanSteps) + " steps");
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                nSteps.setText((++pacmanSteps) + " steps");
+            }
+        });
     }
 
-    public void OpenLogger()
-    {
-        menuVbox.getChildren().clear();
-        //gameGridPane = GetGameGridPane(90.0, 100.0, mapParserResult.rows(), mapParserResult.cols(), mapParserResult.fields());
+    public void OpenLogger(LoggerResult result) throws IOException {
+        this.root.getChildren().clear();
+
+        gameStatusLabel = new Label();
+        gameStatusLabel.setLayoutX(0.5);
+        gameStatusLabel.setLayoutY(0.5);
+        gameStatusLabel.setPadding(new Insets(10));
+        gameStatusLabel.setVisible(false);
+
+        cols = logger.GetCols();
+        rows = logger.GetRows();
+
+        var mapLoggerResult = logger.LogMapParse(selectedLog);
+        rows = mapLoggerResult.rows();
+        cols = mapLoggerResult.cols();
+        maze = new ICommonField[mapLoggerResult.rows()][mapLoggerResult.cols()];
+        gameGridPane = GetGameGridPane(80.0, 100.0, rows, cols, mapLoggerResult.fields());
+
+        topGameMenu = new StackPane();
+        topGameMenu.setMaxHeight(0.075 * scene.getHeight());
+
+        pacmanSteps = 0;
+        nSteps = new Label((pacmanSteps) + " steps");
+        nSteps.setStyle("-fx-text-fill: #FFFFFF; -fx-font-size: 30; -fx-font-weight: bold;");
+        topGameMenu.getChildren().add(nSteps);
+        topGameMenu.setAlignment(nSteps, Pos.CENTER_LEFT);
+
+        Label goToMenu = new Label("MENU");
+        goToMenu.setStyle("-fx-text-fill: #FFFFFF; -fx-font-size: 30; -fx-font-weight: bold;");
+        goToMenu.setCursor(Cursor.HAND);
+        goToMenu.setOnMouseClicked(e -> {
+            System.out.println("here");
+            OpenMainMenu();
+        });
+        topGameMenu.getChildren().add(goToMenu);
+        topGameMenu.setAlignment(goToMenu, Pos.CENTER_RIGHT);
+
+
+
+
+        ImageView playBack = new ImageView(new Image("play_back.png"));
+        playBack.setFitHeight(25);
+        playBack.setFitWidth(50);
+        playBack.setCursor(Cursor.HAND);
+        playBack.setOnMouseClicked(e -> {
+            try {
+                loggerPlayer.PlayBack();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        ImageView stepBack = new ImageView(new Image("step_back.png"));
+        stepBack.setFitHeight(25);
+        stepBack.setFitWidth(38);
+        stepBack.setCursor(Cursor.HAND);
+        stepBack.setOnMouseClicked(e -> {
+            try {
+                loggerPlayer.StepBack();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        playPause = new ImageView(new Image("play.png"));
+        playPause.setFitHeight(25);
+        playPause.setFitWidth(25);
+        playPause.setCursor(Cursor.HAND);
+        playPause.setOnMouseClicked(e -> {
+            try {
+                loggerPlayer.PlayPause();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        ImageView stepForward = new ImageView(new Image("step_forward.png"));
+        stepForward.setFitHeight(25);
+        stepForward.setFitWidth(38);
+        stepForward.setCursor(Cursor.HAND);
+        stepForward.setOnMouseClicked(e -> {
+            try {
+                loggerPlayer.StepForward();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        ImageView playForward = new ImageView(new Image("play_forward.png"));
+        playForward.setFitHeight(25);
+        playForward.setFitWidth(50);
+        playForward.setCursor(Cursor.HAND);
+        playForward.setOnMouseClicked(e -> {
+            try {
+                loggerPlayer.PlayForward();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
+        HBox controls = new HBox();
+        controls.getChildren().addAll(playBack, stepBack, playPause, stepForward, playForward);
+        controls.setAlignment(Pos.CENTER);
+        controls.setPadding(new Insets(5,0,0,0));
+        controls.setMaxWidth(280);
+        controls.setSpacing(20);
+
+
+        topGameMenu.getChildren().add(controls);
+        topGameMenu.setAlignment(controls, Pos.CENTER);
+
+
+        bottomGameMenu = new HBox();
+        bottomGameMenu.setMaxHeight(0.075 * scene.getHeight());
+        bottomGameMenu.setAlignment(Pos.CENTER_LEFT);
+        bottomGameMenu.setSpacing(10);
+
+        bottomGameMenu.setPadding(new Insets(0, 0, 0, 10));
+        topGameMenu.setPadding(new Insets(0, 10, 0, 10));
+
+
+        gameGridPane.setAlignment(Pos.CENTER);
+        root.getChildren().add(gameGridPane);
+        root.getChildren().add(topGameMenu);
+        root.setAlignment(topGameMenu, Pos.TOP_CENTER);
+        root.getChildren().add(bottomGameMenu);
+        root.setAlignment(bottomGameMenu, Pos.BOTTOM_CENTER);
+        root.getChildren().add(gameStatusLabel);
+
+        loggerPlayer = new LoggerPlayer(gameGridPane, logger, result, bottomGameMenu, nSteps, windowHeight / rows, windowWidth / cols, rows, cols);
+        Thread loggerPlayerThread = new Thread(loggerPlayer);
+        loggerPlayerThread.start();
+        loggerPlayerOpened = true;
     }
 }

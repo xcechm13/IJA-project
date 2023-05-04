@@ -2,6 +2,7 @@ package Game.Views;
 
 import ConstantsEnums.Constants;
 import Interfaces.ICommonMazeObjectView;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -39,7 +40,12 @@ public class HomeView implements ICommonMazeObjectView {
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(min(width, height));
         imageView.setFitHeight(min(width, height));
-        maze.getChildren().add(imageView);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                maze.getChildren().add(imageView);
+            }
+        });
         maze.setRowIndex(imageView, row);
         maze.setColumnIndex(imageView, col);
         return imageView;
