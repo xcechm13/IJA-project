@@ -18,10 +18,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 public class Game extends Application {
 
@@ -54,6 +56,7 @@ public class Game extends Application {
     private boolean loggerPlayerOpened = false;
     private VBox menuVbox;
     private String selectedLog;
+    private String selectedMap;
 
 
     @Override
@@ -285,11 +288,6 @@ public class Game extends Application {
         return GridPane;
     }
 
-    private void LoadGame(int mapNumber) throws IOException {
-        OpenGame(mapNumber);
-        System.out.println("Byla vybrána mapa č. " + mapNumber + ".");
-    }
-
     private void OpenMainMenu()
     {
         root.getChildren().clear();
@@ -378,9 +376,6 @@ public class Game extends Application {
 
 
         ScrollPane scrollpane = new ScrollPane(menuVbox);
-        //scrollpane.setStyle("-fx-background-color: #123456");
-        //menuVbox.setStyle("-fx-background-color: #654321");
-        //scrollpane.setMinHeight(210);
         scrollpane.setPadding(new Insets(180, 0, 60, 0));
         scrollpane.setFitToWidth(true);
 
@@ -414,8 +409,20 @@ public class Game extends Application {
                 mapLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 25; -fx-font-weight: 700;");
             });
             mapLabel.setOnMouseClicked(e -> {
-                OpenSubmenuReplayMode();
                 selectedLog = logNames.get(index).logFileName();
+                if(e.getButton() == MouseButton.PRIMARY)
+                {
+                    OpenSubmenuReplayMode();
+                }
+                else if(e.getButton() == MouseButton.SECONDARY)
+                {
+                    try {
+                        logger.DeleteLog(selectedLog);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    menuVbox.getChildren().remove(mapLabel);
+                }
             });
             menuVbox.getChildren().add(mapLabel);
         }
@@ -497,13 +504,13 @@ public class Game extends Application {
 
     private void OpenSubmenuPlay()
     {
-        String[] mapNames = {"Map 1", "Map 2", "Map 3", "Map 4"};
+        List<String> mapNames = mapParser.GetListMaps();
         menuVbox.getChildren().clear();
 
-        for(int i=0; i<mapNames.length; i++)
+        for(int i=0; i<mapNames.size(); i++)
         {
             var mapID = i;
-            Label mapLabel = new Label(mapNames[i]);
+            Label mapLabel = new Label(mapNames.get(i));
             mapLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 25; -fx-font-weight: 700;");
             mapLabel.setCursor(Cursor.HAND);
             mapLabel.setOnMouseEntered(e -> {
@@ -513,6 +520,7 @@ public class Game extends Application {
                 mapLabel.setStyle("-fx-background-color: transparent; -fx-text-fill: #F9C328; -fx-font-size: 25; -fx-font-weight: 700;");
             });
             mapLabel.setOnMouseClicked(e -> {
+                selectedMap = mapNames.get(mapID);
                 try {
                     OpenGame(mapID);
                 } catch (IOException ex) {
@@ -550,7 +558,7 @@ public class Game extends Application {
         gameStatusLabel.setPadding(new Insets(10));
         gameStatusLabel.setVisible(false);
 
-        var mapParserResult = mapParser.getMap(mapNum);
+        var mapParserResult = mapParser.getMap(selectedMap);
         rows = mapParserResult.rows();
         cols = mapParserResult.cols();
         keys = mapParserResult.keys();
@@ -807,9 +815,6 @@ public class Game extends Application {
         gameStatusLabel.setLayoutY(0.5);
         gameStatusLabel.setPadding(new Insets(10));
         gameStatusLabel.setVisible(false);
-
-        cols = logger.GetCols();
-        rows = logger.GetRows();
 
         var mapLoggerResult = logger.LogMapParse(selectedLog);
         rows = mapLoggerResult.rows();

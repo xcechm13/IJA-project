@@ -73,7 +73,7 @@ public class LoggerPlayer implements Runnable{
             maze.getChildren().removeAll();
             try
             {
-                sleep(5);
+                sleep(10);
             } catch (InterruptedException e){}
         }
 
@@ -155,8 +155,27 @@ public class LoggerPlayer implements Runnable{
     }
 
     public void PlayBack() throws IOException {
-
-        System.out.println("PlayBack");
+        playing = true;
+        new Thread(() -> {
+            while (playing) {
+                try {
+                    Thread.sleep(400);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                Platform.runLater(() -> {
+                    try {
+                        StepBack();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if (result == null) {
+                        playing = false;
+                    }
+                    System.out.println("PlayBackwards");
+                });
+            }
+        }).start();
     }
 
     public void StepBack() throws IOException {
@@ -167,14 +186,7 @@ public class LoggerPlayer implements Runnable{
     }
 
     public void PlayPause() throws IOException {
-        if(playing)
-        {
-            playing = false;
-        }
-        else
-        {
-            playing = true;
-        }
+        playing = !playing;
         System.out.println("Play / Pause");
     }
 
@@ -207,29 +219,5 @@ public class LoggerPlayer implements Runnable{
                 });
             }
         }).start();
-
-        /*while(true)
-        {
-            long startTime = System.currentTimeMillis();
-            while (System.currentTimeMillis() - startTime < 2000)
-            {
-                Thread.yield();
-            }
-
-            result = logger.NextStep();
-            if(result != null)
-                UpdateObjects();
-            System.out.println("PlayForward");
-        }
-        /*
-        System.out.println("PlayForward");
-        playing = true;
-        while(playing)
-        {
-            try {
-                sleep(1000);
-            } catch (InterruptedException e) {}
-            StepForward();
-        }*/
     }
 }

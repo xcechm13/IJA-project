@@ -17,6 +17,7 @@ public class Logger {
 
     public int logDataNum;
     public String logFile;
+
     public List<LogName> GetLogs() {
         List<LogName> Logs = new ArrayList<>();
         String logFoldersPath = "data\\logs";
@@ -78,24 +79,6 @@ public class Logger {
         return LoadLogBasedOnLogDataNum();
     }
 
-    public int GetCols()
-    {
-        // TODO
-        return 0;
-    }
-
-    public int GetRows()
-    {
-        // TODO
-        return 0;
-    }
-    public String[][] GetFields()
-    {
-        // TODO
-        return null;
-    }
-
-    // Vracíš null pokud již další nejsou
     public LoggerResult NextStep() throws IOException {
         File file;
         logDataNum++;
@@ -117,7 +100,6 @@ public class Logger {
         return LoadLogBasedOnLogDataNum();
     }
 
-    // Vracíš null pokud již další nejsou
     public LoggerResult BackStep() throws IOException {
         File file;
         logDataNum--;
@@ -253,5 +235,18 @@ public class Logger {
             System.out.println();
         }
         return new MapLoggerResult(rows, cols, field);
+    }
+
+    public void DeleteLog(String logFileName) throws IOException {
+        File file = new File("data\\logs\\" + logFileName);
+        if (!file.exists()) {
+            System.out.println("File already does not exist.");
+            return;
+        }
+
+        Files.walk(Path.of("data\\logs\\" + logFileName))
+                .sorted(java.util.Comparator.reverseOrder())
+                .map(Path::toFile)
+                .forEach(File::delete);
     }
 }

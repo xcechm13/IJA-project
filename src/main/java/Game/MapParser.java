@@ -1,33 +1,38 @@
 package Game;
 
-import ConstantsEnums.MazeObject;
-import Game.Fields.PathField;
-import Game.Fields.WallField;
 import Game.Records.MapParserResult;
 
 import java.io.*;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MapParser{
 
-    public MapParserResult getMap(int mapNum) throws IOException {
-        ClassLoader classLoader = getClass().getClassLoader();
-        InputStream chosenMap = classLoader.getResourceAsStream("map1.txt");
-
-        switch (mapNum)
-        {
-            case 0 -> {
-                chosenMap = classLoader.getResourceAsStream("map1.txt");
+    public List<String> GetListMaps() {
+        List<String> maps = new ArrayList<>();
+        String mapsFolderPath = "data/maps";
+        Path mapsDirectory = Paths.get(mapsFolderPath);
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(mapsDirectory, "*.txt")) {
+            for (Path path : stream) {
+                String fileName = path.getFileName().toString();
+                String mapName = fileName.substring(0, fileName.lastIndexOf('.'));
+                maps.add(mapName);
             }
-            case 1 -> {
-                chosenMap = classLoader.getResourceAsStream("map2.txt");
-            }
-            case 2 -> {
-                chosenMap = classLoader.getResourceAsStream("map3.txt");
-            }
-            case 3 -> {
-                chosenMap = classLoader.getResourceAsStream("map4.txt");
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return maps;
+    }
+
+    public MapParserResult getMap(String mapName) throws IOException {
+        mapName = "map1";
+        ClassLoader classLoader = getClass().getClassLoader();
+        InputStream chosenMap = classLoader.getResourceAsStream( mapName + ".txt");
 
         int keys = 0;
 
