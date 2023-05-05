@@ -10,9 +10,15 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Parse maps from path data/maps
+ */
 public class MapParser{
 
+    /**
+     * get list of maps located in data/maps (without the .txt)
+     * @return list of map names
+     */
     public List<String> GetListMaps() {
         List<String> maps = new ArrayList<>();
         String mapsFolderPath = "data/maps";
@@ -29,10 +35,15 @@ public class MapParser{
         return maps;
     }
 
+    /**
+     * Parse map from data/maps into 2d field X(walls) and objects/paths(S,T,K,G,.)
+     * @param mapName Map that has to be parsed
+     * @return rows, cols, keys, [rows][cols] X/.
+     * @throws IOException file error
+     */
     public MapParserResult getMap(String mapName) throws IOException {
-        mapName = "map1";
-        ClassLoader classLoader = getClass().getClassLoader();
-        InputStream chosenMap = classLoader.getResourceAsStream( mapName + ".txt");
+        File file = new File("data\\maps\\" +  mapName + ".txt");
+        InputStream chosenMap = new FileInputStream(file);
 
         int keys = 0;
 
@@ -41,7 +52,7 @@ public class MapParser{
         int numRows = Integer.parseInt(dimensions[0]);
         int numCols = Integer.parseInt(dimensions[1]);
 
-        // create a 2D array with extra rows and columns to represent the walls
+        // 2D array with extra rows and columns to represent the walls
         var map = new String[numRows + 2][numCols + 2];
 
         // initialize the borders of the map with walls (X)

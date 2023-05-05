@@ -22,15 +22,27 @@ import ConstantsEnums.Constants;
 
 import static java.lang.Thread.sleep;
 
-
+/**
+ * save logs from each game played
+ */
 public class LoggerRecorder implements Runnable{
 
     public int logIncrement;
+    /**
+     * Path to LogDirectory
+     */
     public String logFolderPath;
+    /**
+     * Path to exact Log
+     */
     public String logFilePath;
     private ICommonField[][] maze;
     private boolean isRecording;
 
+    /**
+     * Constructor
+     * @param mazeIn Actual maze full of PathFields/WallFields (contains MazeObjects)
+     */
     public LoggerRecorder(ICommonField[][] mazeIn) {
         logIncrement = 0;
         logFolderPath = Paths.get("data", "logs").toString();
@@ -39,11 +51,17 @@ public class LoggerRecorder implements Runnable{
         isRecording = false;
     }
 
+    /**
+     * Stop the saving of logs
+     */
     public void stop()
     {
         isRecording = false;
     }
 
+    /**
+     * Start logging actual game
+     */
     @Override
     public void run() {
         isRecording = true;
@@ -52,6 +70,8 @@ public class LoggerRecorder implements Runnable{
         int logFileNum = 0;
         String dirName = "LogNum0";
 
+        // max 100 games can be saved
+        // checks first free name
         while(logFileNum < 100)
         {
             dirName = "LogNum" + logFileNum;
@@ -75,8 +95,9 @@ public class LoggerRecorder implements Runnable{
         while (isRecording) {
             logFilePath = Paths.get(logFolderPath, "game" + logIncrement + ".log").toString();
             try (PrintWriter writer = new PrintWriter(new FileOutputStream(logFilePath, false))) {
-                //SaveLOG
+                //Save LOG
                 writer.println(maze.length + " " + maze[0].length);
+                // same date for every log
                 if (!dateSet)
                 {
                     dateSet = true;
@@ -85,6 +106,7 @@ public class LoggerRecorder implements Runnable{
                     datebuff = date.format(formatter);
                 }
                 writer.println(datebuff);
+                //check save all objects of every Pathfield
                 for (int r = 0; r < maze.length; r++) {
                     for (int c = 0; c < maze[r].length; c++) {
                         writer.print("[" + r + "]" + "[" + c + "]: ");
@@ -92,7 +114,6 @@ public class LoggerRecorder implements Runnable{
                             writer.print(".");
                             List<ICommonMazeObject> objectsInPathField = maze[r][c].GetMazeObjects();
                             for (ICommonMazeObject o : objectsInPathField) {
-                                //TODO pacman/ghost vzdy prvni
                                 if (o.IsPacman()) {
                                     writer.print(" Pacman");
                                     writer.print(" " + ((PacmanObject) o).GetLives());
@@ -136,16 +157,12 @@ public class LoggerRecorder implements Runnable{
                 e.printStackTrace();
             }
 
-            //check if something changed
+            //check if something changed (2 consecutive cannot be the same)
             if (logIncrement > 0) {
                 String file1 = Paths.get(logFolderPath, "game" + (logIncrement - 1) + ".log").toString();
                 String file2 = Paths.get(logFolderPath, "game" + logIncrement + ".log").toString();
                 try {
-                    System.out.println("file1: " + file1);
-                    System.out.println("file2: " + file2);
-                    boolean asdasd = areFilesIdentical(file1, file2);
-                    if (asdasd) {
-                        System.out.println("jsou stejne: ");
+                    if (areFilesIdentical(file1, file2)) {
                         try {
                             sleep(Constants.LoggerSpeed);
                         } catch (InterruptedException e) {
@@ -153,7 +170,6 @@ public class LoggerRecorder implements Runnable{
                         }
                         continue;
                     }
-                    System.out.println("nejsou stejne: ");
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -168,22 +184,13 @@ public class LoggerRecorder implements Runnable{
         }
     }
 
-    /*public void DeleteLogFiles() {
-        // Get the path to the log directory
-        String resourcesFolderPath = Paths.get("data").toString();
-        Path pathBuff = Paths.get(resourcesFolderPath, "logs");
-
-        // Delete all files in the log directory
-        try {
-            Files.walk(pathBuff)
-                    .filter(Files::isRegularFile)
-                    .map(Path::toFile)
-                    .forEach(File::delete);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }*/
-
+    /**
+     * Check if two files have identical content
+     * @param filePath1 first file path
+     * @param filePath2 second file path
+     * @return true if identical
+     * @throws IOException file error
+     */
     public boolean areFilesIdentical(String filePath1, String filePath2) throws IOException {
         try (BufferedReader reader1 = new BufferedReader(new FileReader(filePath1));
              BufferedReader reader2 = new BufferedReader(new FileReader(filePath2))) {

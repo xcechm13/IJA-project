@@ -13,11 +13,24 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
+/**
+ * Class for parsing data from logs
+ */
 public class Logger {
 
+    /**
+     * counter of log of replayed game
+     */
     public int logDataNum;
+    /**
+     * Name of Game that is replaying
+     */
     public String logFile;
 
+    /**
+     * Checks all Games saved in log in path data/logs
+     * @return All saved games (date + name)
+     */
     public List<LogName> GetLogs() {
         List<LogName> Logs = new ArrayList<>();
         String logFoldersPath = "data\\logs";
@@ -30,6 +43,7 @@ public class Logger {
             stream
                     .filter(Files::isDirectory)
                     .forEach(dir -> {
+                        //reads date from each first log on second line
                         String PathToLog = dir.toString() + "\\game0.log";
                         try {
                             List<String> lines = Files.readAllLines(Path.of(PathToLog));
@@ -38,7 +52,7 @@ public class Logger {
                                 logDateTime[0] = secondLine;
                             }
                         } catch (IOException e) {
-                            // handle file read error
+                            e.printStackTrace();
                         }
                         logFileName[0] = dir.getFileName().toString();
                         Logs.add(new LogName(logDateTime[0], logFileName[0]));
@@ -50,6 +64,13 @@ public class Logger {
         return Logs;
     }
 
+    /**
+     * Load first/last log from given logFileName
+     * @param logFileName  name of log
+     * @param fromStart true if load first log else load last
+     * @return lives + steps + [row][col]List of strings(object type)
+     * @throws IOException File error
+     */
     public LoggerResult LoadLog(String logFileName, boolean fromStart) throws IOException {
         logDataNum = 0;
         logFile = logFileName;
@@ -57,18 +78,17 @@ public class Logger {
         File file;
         if(!fromStart)
         {
+            //Get to the last valid log
             while(true)
             {
                 file = new File("data\\logs\\"+ logFile +"\\game"+(logDataNum)+".log");
                 if (!file.exists()) {
-                    System.out.println("File does not exist.");
-                    logDataNum--; //TODO HANDLE ABY NESLO POD 0
+                    logDataNum--;
                     break;
                 }
 
                 if(!checkEndOfLog("data\\logs\\"+ logFile +"\\game"+(logDataNum)+".log"))
                 {
-                    System.out.println("Chybi end of log" + logDataNum);
                     logDataNum--;
                     break;
                 }
@@ -79,20 +99,23 @@ public class Logger {
         return LoadLogBasedOnLogDataNum();
     }
 
+    /**
+     * Get next log based on logDataNum
+     * @return null if there are no more logs / lives + steps + [row][col]List of strings(object type)
+     * @throws IOException File error
+     */
     public LoggerResult NextStep() throws IOException {
         File file;
         logDataNum++;
 
         file = new File("data\\logs\\"+ logFile +"\\game"+(logDataNum)+".log");
         if (!file.exists()) {
-            System.out.println("File does not exist.");
             logDataNum--;
             return null;
         }
 
         if(!checkEndOfLog("data\\logs\\"+ logFile +"\\game"+(logDataNum)+".log"))
         {
-            System.out.println("Chybi end of log" + logDataNum);
             logDataNum--;
             return null;
         }
@@ -100,20 +123,23 @@ public class Logger {
         return LoadLogBasedOnLogDataNum();
     }
 
+    /**
+     * Get previous log based on logDataNum
+     * @return null if there are no more valid logs / lives + steps + [row][col]List of strings(object type)
+     * @throws IOException File error
+     */
     public LoggerResult BackStep() throws IOException {
         File file;
         logDataNum--;
 
         file = new File("data\\logs\\"+ logFile +"\\game"+(logDataNum)+".log");
         if (!file.exists()) {
-            System.out.println("File does not exist.");
             logDataNum++;
             return null;
         }
 
         if(!checkEndOfLog("data\\logs\\"+ logFile +"\\game"+(logDataNum)+".log"))
         {
-            System.out.println("Chybi end of log" + logDataNum);
             logDataNum++;
             return null;
         }
@@ -121,10 +147,16 @@ public class Logger {
         return LoadLogBasedOnLogDataNum();
     }
 
+    /**
+     * Load log from file based on logDataNum
+     * @return lives + steps + [row][col]List of strings(object type)
+     * @throws IOException file error
+     */
     public LoggerResult LoadLogBasedOnLogDataNum() throws IOException {
         final int[] lives = {0};
         final int[] steps = {0};
 
+        //Inicialize maze[row][col] (first line of log)
         List<String> lines = Files.readAllLines(Path.of("data\\logs\\" + logFile + "\\game"+ logDataNum +".log"));
         String firstLine = lines.get(0);
         String[] rowCols = firstLine.split(" ");
@@ -137,6 +169,7 @@ public class Logger {
             }
         }
 
+        // save Objects to maze[][]
         try (Stream<String> stream = Files.lines(Paths.get("data\\logs\\" + logFile + "\\game"+ logDataNum +".log"))) {
             stream.filter(line -> line.contains("Target") || line.contains("Key") || line.contains("Home")
                             || line.contains("Pacman") || line.contains("Ghost"))
@@ -148,6 +181,7 @@ public class Logger {
                         {
                             if (parts[i].equals("Pacman"))
                             {
+                                //save lives + steps
                                 lives[0] = Integer.parseInt(parts[i + 1]);
                                 steps[0] = Integer.parseInt(parts[i + 2]);
                                 maze[Integer.parseInt(indices[0])][Integer.parseInt(indices[1])].add(parts[i + 3]);
@@ -167,6 +201,11 @@ public class Logger {
         return new LoggerResult(steps[0], lives[0], maze);
     }
 
+    /**
+     * check if log is valid
+     * @param filePath path to Log
+     * @return true if valid
+     */
     public boolean checkEndOfLog(String filePath) {
         try {
             File file = new File(filePath);
@@ -184,28 +223,32 @@ public class Logger {
         }
     }
 
+    /**
+     * Parse log to map
+     * @param LogNum LogName
+     * @return rows, cols, [][] of X(Wall) or . (Path)
+     * @throws FileNotFoundException file error
+     */
     public MapLoggerResult LogMapParse(String LogNum) throws FileNotFoundException {
         String logFilePath = Paths.get("data", "logs", LogNum, "game0.log").toString();
-
 
         int rows = 0;
         int cols = 0;
         String[][] field = null;
         try (Scanner scanner = new Scanner(new File(logFilePath))) {
-            // Read the first line of the file to get the dimensions of the field
+            // Read the first line of the file to get the row and col of the field
             String firstLine = scanner.nextLine();
             String[] dimensions = firstLine.split(" ");
             rows = Integer.parseInt(dimensions[0]);
             cols = Integer.parseInt(dimensions[1]);
 
-            // Create the field array
             field = new String[rows][cols];
 
             // Loop through the remaining lines of the file to fill in the field array
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
 
-                // Ignore any lines that don't start with a "[" character
+                // Ignore any lines that dont start with a "["
                 if (!line.startsWith("[")) {
                     continue;
                 }
@@ -217,7 +260,6 @@ public class Logger {
                 int col = Integer.parseInt(coords[1]);
                 String value = parts[1];
 
-                // Store the value in the field array
                 field[row][col] = value;
             }
         } catch (FileNotFoundException e) {
@@ -226,21 +268,17 @@ public class Logger {
             e.printStackTrace();
         }
 
-        // Print the field array to the console
-        for (String[] row : field) {
-            for (String value : row) {
-                System.out.print(value == null ? "." : value.charAt(0));
-                System.out.print(" ");
-            }
-            System.out.println();
-        }
         return new MapLoggerResult(rows, cols, field);
     }
 
+    /**
+     * Delete log on given LogName
+     * @param logFileName LogName
+     * @throws IOException file error
+     */
     public void DeleteLog(String logFileName) throws IOException {
         File file = new File("data\\logs\\" + logFileName);
         if (!file.exists()) {
-            System.out.println("File already does not exist.");
             return;
         }
 

@@ -19,6 +19,7 @@ public class PathField extends Observable implements ICommonField {
 
     List<ICommonMazeObject> MazeObjects;
 
+
     public PathField(int row, int col, ICommonField[][] maze)
     {
         this.row = row;
