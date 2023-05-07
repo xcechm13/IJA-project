@@ -25,42 +25,142 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Main class representing the game
+ */
 public class Game extends Application {
 
+    /**
+     * Holds a reference to the parser of the map text file
+     */
     private static MapParser mapParser;
+    /**
+     * Holds a reference to the logger
+     */
     private static Logger logger;
+    /**
+     * Holds a reference to the logo player
+     */
     private static LoggerPlayer loggerPlayer;
+    /**
+     * The main visual element of the UI
+     */
     private StackPane root;
+    /**
+     * A grid representing the game's maze
+     */
     private GridPane gameGridPane;
+    /**
+     * Visual element of the top menu in game
+     */
     private StackPane topGameMenu;
+    /**
+     * Visual element of the bottom menu in game
+     */
     private HBox bottomGameMenu;
+    /**
+     * Visual element of the game status
+     */
     private Label gameStatusLabel;
+    /**
+     * Visual element displaying information about whether the game is paused or running
+     */
     private ImageView playPause;
+    /**
+     * Holds information about the number of rows in game
+     */
     private int rows;
+    /**
+     * Holds information about the number of columns in game
+     */
     private int cols;
+    /**
+     * Holds information about the number of pacman starting row
+     */
     private int pacmanStartingRow;
+    /**
+     * Holds information about the number of pacman starting column
+     */
     private int pacmanStartingCol;
+    /**
+     * Holds information about width of one field
+     */
     private double fieldWidth;
+    /**
+     * Holds information about height of one field
+     */
     private double fieldHeight;
+    /**
+     * Holds information about number of keys in maze
+     */
     private int keys;
+    /**
+     * Holds information about number of pacman step
+     */
     private int pacmanSteps = 0;
+    /**
+     * Visual element displaying information about number of pacman step
+     */
     private Label nSteps = new Label();
+    /**
+     * Holds information about actual window width
+     */
     private static double windowWidth;
+    /**
+     * Holds information about actual window height
+     */
     private static double windowHeight;
+    /**
+     * Holds a 2D array of fields representing maze
+     */
     private ICommonField[][] maze;
+    /**
+     * Holds a reference to the process runner
+     */
     private static ProcessRunner processRunner;
+    /**
+     * Holds a reference to UI scene
+     */
     private Scene scene;
+    /**
+     * Holds information about whether the game is open
+     */
     private boolean gameOpen = false;
+    /**
+     * Holds information about whether the game is stopped
+     */
     private boolean gameStopped = false;
+    /**
+     * Holds information about whether the game is finished
+     */
     private boolean gameFinished = false;
+    /**
+     * Holds information about whether the logger player is opened
+     */
     private boolean loggerPlayerOpened = false;
+    /**
+     * Visual element displaying menu
+     */
     private VBox menuVbox;
+    /**
+     * Holds information about selected log to play
+     */
     private String selectedLog;
+    /**
+     * Holds information about selected map
+     */
     private String selectedMap;
 
 
+    /**
+     * Creates event handlers responsive to window resizing and opens the game's main menu
+     * @param stage the primary stage for this application, onto which
+     * the application scene can be set.
+     * Applications may create other stages, if needed, but they will not be
+     * primary stages.
+     */
     @Override
-    public void start(Stage stage) throws IOException
+    public void start(Stage stage)
     {
         stage.widthProperty().addListener((observableValue, oldWidth, newWidth) -> {
             if(loggerPlayerOpened)
@@ -103,9 +203,12 @@ public class Game extends Application {
         stage.setTitle("PACMAN");
         stage.show();
         OpenMainMenu();
-        //OpenGame(0);
     }
 
+    /**
+     * Creates the necessary class instances
+     * @param args program arguments (not used)
+     */
     public static void main(String[] args) {
         windowWidth = Constants.WindowWidth;
         windowHeight = Constants.WindowHeight*0.8;
@@ -114,24 +217,29 @@ public class Game extends Application {
         launch();
     }
 
+    /**
+     * Create one field (visual element) in the game grid
+     * @param fieldNeighbour what neighbors does the field have
+     * @return Visual element representing one field in the game grid
+     */
     private VBox GetField(FieldNeighbour fieldNeighbour)
     {
         var booleanField = FieldPixels.CreateField(fieldNeighbour);
 
-        // Položka v hracím poli
+        // One field in the game grid
         VBox vBox = new VBox();
 
         GridPane vBoxGridPane = new GridPane();
         vBoxGridPane.setPrefWidth(10000);
         vBoxGridPane.setPrefHeight(10000);
-        // přidání definice sloupců
+        // adding a column definition
         ColumnConstraints vBoxGridPaneColumnConstraints = new ColumnConstraints();
         vBoxGridPaneColumnConstraints.setPercentWidth(100.0 / Constants.FieldPixelsNum);
         for(int i=0; i<Constants.FieldPixelsNum; i++)
         {
             vBoxGridPane.getColumnConstraints().add(vBoxGridPaneColumnConstraints);
         }
-        // přidání definice řádků
+        // adding a rows definition
         RowConstraints vBoxGridPaneRowConstraints = new RowConstraints();
         vBoxGridPaneRowConstraints.setPercentHeight(100.0 / Constants.FieldPixelsNum);
         for(int i=0; i<Constants.FieldPixelsNum; i++)
@@ -158,6 +266,13 @@ public class Game extends Application {
         return vBox;
     }
 
+    /**
+     * Determines whether the given field is Wall
+     * @param maze maze in 2D String array format
+     * @param row number of rows
+     * @param col number of columns
+     * @return true if field on position [row,col] is wall ('X'), otherwise false
+     */
     private boolean IsWall(String[][] maze, int row, int col)
     {
         if(row < 0 || row >= maze.length || col < 0 || col >= maze[0].length)
@@ -171,6 +286,15 @@ public class Game extends Application {
         return false;
     }
 
+    /**
+     * Creates a visual maze
+     * @param percentageHeight how much of the window should be occupied in the vertical position in percentage
+     * @param percentageWidth how much of the window should be occupied in the horizontal position in percentage
+     * @param rows number of maze rows
+     * @param cols number of maze cols
+     * @param fields 2D String array representing the maze
+     * @return A GridPane visual element with a created background
+     */
     private GridPane GetGameGridPane(double percentageHeight, double percentageWidth, int rows, int cols, String[][] fields)
     {
         GridPane GridPane = CreateGridPane(percentageHeight, percentageWidth, rows, cols);
@@ -262,6 +386,14 @@ public class Game extends Application {
         return GridPane;
     }
 
+    /**
+     * Creates an empty GridPane visual element with defined rows and columns
+     * @param percentageHeight how much of the window should be occupied in the vertical position in percentage
+     * @param percentageWidth how much of the window should be occupied in the horizontal position in percentage
+     * @param rows number of maze rows
+     * @param cols number of maze cols
+     * @return Empty GridPane visual element with defined rows and columns
+     */
     private GridPane CreateGridPane(double percentageHeight, double percentageWidth, int rows, int cols)
     {
         GridPane GridPane = new GridPane();
@@ -269,7 +401,7 @@ public class Game extends Application {
         GridPane.setPrefHeight(10000);
         GridPane.setPrefWidth(10000);
 
-        // přidání definice sloupců
+        // adding a column definition
         ColumnConstraints ColumnConstraints = new ColumnConstraints();
         ColumnConstraints.setPercentWidth(percentageWidth / cols);
         for(int i=0; i<cols; i++)
@@ -277,7 +409,7 @@ public class Game extends Application {
             GridPane.getColumnConstraints().add(ColumnConstraints);
         }
 
-        // přidání definice řádků
+        // adding a row definition
         RowConstraints RowConstraints = new RowConstraints();
         RowConstraints.setPercentHeight(percentageHeight / rows);
         for(int i=0; i<rows; i++)
@@ -288,6 +420,9 @@ public class Game extends Application {
         return GridPane;
     }
 
+    /**
+     * Opens the game's main menu
+     */
     private void OpenMainMenu()
     {
         root.getChildren().clear();
@@ -389,6 +524,9 @@ public class Game extends Application {
 
     }
 
+    /**
+     * Opens a sub-menu with a selection of games to replay by time and date
+     */
     private void OpenSubmenuReplay()
     {
         menuVbox.getChildren().clear();
@@ -445,6 +583,9 @@ public class Game extends Application {
         menuVbox.getChildren().addAll(menuLabelBack);
     }
 
+    /**
+     * Opens a submenu with replay mode selection
+     */
     private void OpenSubmenuReplayMode()
     {
         menuVbox.getChildren().clear();
@@ -502,6 +643,9 @@ public class Game extends Application {
         menuVbox.getChildren().addAll(menuLabel1, menuLabel2, menuLabel3);
     }
 
+    /**
+     * Opens a sub-menu with a selection of maps
+     */
     private void OpenSubmenuPlay()
     {
         List<String> mapNames = mapParser.GetListMaps();
@@ -522,7 +666,7 @@ public class Game extends Application {
             mapLabel.setOnMouseClicked(e -> {
                 selectedMap = mapNames.get(mapID);
                 try {
-                    OpenGame(mapID);
+                    OpenGame();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -548,7 +692,11 @@ public class Game extends Application {
         menuVbox.getChildren().add(menuLabelBack);
     }
 
-    private void OpenGame(int mapNum) throws IOException
+    /**
+     * Starts the game
+     * @throws IOException
+     */
+    private void OpenGame() throws IOException
     {
         this.root.getChildren().clear();
 
@@ -636,7 +784,11 @@ public class Game extends Application {
         gameFinished = false;
     }
 
-    public void CreateObjectMap(String[][] fields) throws FileNotFoundException {
+    /**
+     * Places objects on the map base
+     * @param fields 2D String array representing the maze
+     */
+    public void CreateObjectMap(String[][] fields) {
         for(int r = 0; r < fields.length; r++)
         {
             for(int c = 0; c < fields[0].length; c++)
@@ -690,6 +842,10 @@ public class Game extends Application {
         processRunner.runGhosts();
     }
 
+    /**
+     * Responds to pressing the ESC key in different states of the application
+     * @throws IOException
+     */
     public void ESCPressed() throws IOException
     {
         if(gameFinished)
@@ -745,6 +901,11 @@ public class Game extends Application {
         }
     }
 
+    /**
+     * Updates the size of all objects
+     * @param height new field height
+     * @param width new field widhth
+     */
     private void UpdateFieldSize(double height, double width)
     {
         fieldWidth = width;
@@ -765,6 +926,14 @@ public class Game extends Application {
         }
     }
 
+    /**
+     * Responds to the death of PACAMAN
+     * @param lives new number of lives after death
+     * @param totalKeys information about total keys in maze
+     * @param foundKeys information about how many keys have already been collected
+     * @param steps information about how many steps pacman has taken
+     * @throws IOException
+     */
     public void PacmanDead(int lives, int totalKeys, int foundKeys, int steps) throws IOException {
         bottomGameMenu.getChildren().remove(0);
         if(lives == 0)
@@ -786,6 +955,9 @@ public class Game extends Application {
         processRunner.runPacman();
     }
 
+    /**
+     * Pauses the game logger and displays information about the user's winnings
+     */
     public void PacmanWin()
     {
         processRunner.stopRecorder();
@@ -797,6 +969,9 @@ public class Game extends Application {
         gameStatusLabel.setVisible(true);
     }
 
+    /**
+     * Changes the information about the number of steps in the UI
+     */
     public void PacmanStep()
     {
         Platform.runLater(new Runnable() {
@@ -807,6 +982,11 @@ public class Game extends Application {
         });
     }
 
+    /**
+     * Open game replayer
+     * @param result Log parsing result
+     * @throws IOException
+     */
     public void OpenLogger(LoggerResult result) throws IOException {
         this.root.getChildren().clear();
 

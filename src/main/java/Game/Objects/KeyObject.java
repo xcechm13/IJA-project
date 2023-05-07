@@ -112,8 +112,8 @@ public class KeyObject implements ICommonMazeObject {
 
     /**
      * Update dimensions of object
-     * @param height height of maze
-     * @param width width of maze
+     * @param height height of field
+     * @param width width of field
      */
     @Override
     public void SetFieldSize(double height, double width)

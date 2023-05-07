@@ -74,7 +74,9 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
      */
     private boolean Moving = true;
 
-    //TODO
+    /**
+     * It holds the information whether the pacman is now moving to the clicked field
+     */
     private boolean GotoFieldActive = false;
     private int GotoFieldRow = -1;
     private int GotoFieldCol = -1;
@@ -225,8 +227,8 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
 
     /**
      * Update dimensions of object
-     * @param height height of maze
-     * @param width width of maze
+     * @param height height of field
+     * @param width width of field
      */
     @Override
     public void SetFieldSize(double height, double width)
@@ -492,12 +494,12 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
      */
     private void GoToField(int row, int col)
     {
-        var result = findPath(row, col);
-        path = PointsToDirections(result);
-        for(int i=0; i<path.size(); i++)
+        var result = DLS(row, col);
+        if(result == null)
         {
-            System.out.println(path.get(i));
+            return;
         }
+        path = PointsToDirections(result);
 
         if(path.size() == 0) return;
         GotoFieldActive = true;
@@ -518,16 +520,21 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         }
     }
 
-    //TODO
-    private ArrayList<Point> findPath(int targetRow, int targetCol)
+    /**
+     * It implements a Depth Limited Search (DLS) algorithm to find the way to the field
+     * @param targetRow arget row
+     * @param targetCol target col
+     * @return sequence of points leading to the target field or null if path was not found
+     */
+    private ArrayList<Point> DLS(int targetRow, int targetCol)
     {
         int maxDeep = 1;
 
-        while (true)
+        while (maxDeep < 200)
         {
             visited.clear();
             visited.add(actField);
-            var result = DLS(actField, targetRow, targetCol, ++maxDeep);
+            var result = IDS(actField, targetRow, targetCol, ++maxDeep);
             if(result == null)
             {
                 maxDeep++;
@@ -537,10 +544,18 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
                 return result;
             }
         }
+        return null;
     }
 
-    //TODO
-    private ArrayList<Point> DLS(PathField field, int targetRow, int targetCol, int maxDeep)
+    /**
+     * It implements a Iterative deepening Search (IDS) algorithm to find the way to the field
+     * @param field
+     * @param targetRow target row
+     * @param targetCol target col
+     * @param maxDeep max deep
+     * @return sequence of points leading to the target field or null if path was not found
+     */
+    private ArrayList<Point> IDS(PathField field, int targetRow, int targetCol, int maxDeep)
     {
         if(field == null || maxDeep == 0)
         {
@@ -565,7 +580,7 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
             else if(!visited.contains(pathField))
             {
                 visited.add(pathField);
-                ArrayList<Point> result = DLS(pathField, targetRow, targetCol, maxDeep - 1);
+                ArrayList<Point> result = IDS(pathField, targetRow, targetCol, maxDeep - 1);
                 if(result != null)
                 {
                     currentPath.addAll(result);
@@ -576,7 +591,11 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         return null;
     }
 
-    //TODO
+    /**
+     * Converts a sequence of points leading to the target field into a sequence of directions (UP, DOWN, LEFT, RIGHT)
+     * @param points sequence of points
+     * @return sequence of directions
+     */
     public static List<Direction> PointsToDirections(List<Point> points) {
         List<Direction> directions = new ArrayList<>();
 
