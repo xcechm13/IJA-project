@@ -1,8 +1,8 @@
 package Game;
 
-import ConstantsEnums.Constants;
-import ConstantsEnums.FieldNeighbour;
-import ConstantsEnums.FieldPixels;
+import Constants.Constants;
+import Enums.FieldNeighbour;
+import Constants.FieldPixels;
 import Game.Fields.PathField;
 import Game.Fields.WallField;
 import Game.Objects.*;

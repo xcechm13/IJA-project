@@ -1,6 +1,6 @@
 package Interfaces;
 
-import ConstantsEnums.Direction;
+import Enums.Direction;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package ConstantsEnums;
+package Enums;
 
 /**
  * Different MazeWalls

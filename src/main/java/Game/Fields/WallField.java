@@ -1,6 +1,6 @@
 package Game.Fields;
 
-import ConstantsEnums.Direction;
+import Enums.Direction;
 import Interfaces.ICommonField;
 import Interfaces.ICommonMazeObject;
 

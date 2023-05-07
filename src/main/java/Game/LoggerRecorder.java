@@ -1,24 +1,18 @@
 package Game;
 
-import ConstantsEnums.Direction;
+import Enums.Direction;
 import Game.Objects.GhostObject;
 import Game.Objects.PacmanObject;
-import Game.Records.MapParserResult;
 import Interfaces.ICommonField;
 import Interfaces.ICommonMazeObject;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Stream;
 
-import ConstantsEnums.Constants;
+import Constants.Constants;
 
 import static java.lang.Thread.sleep;
 

@@ -1,6 +1,6 @@
 package Game.Views;
 
-import ConstantsEnums.Constants;
+import Constants.Constants;
 import Interfaces.ICommonMazeObjectView;
 import javafx.application.Platform;
 import javafx.scene.image.Image;

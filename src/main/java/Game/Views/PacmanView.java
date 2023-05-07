@@ -1,7 +1,7 @@
 package Game.Views;
 
-import ConstantsEnums.Constants;
-import ConstantsEnums.Direction;
+import Constants.Constants;
+import Enums.Direction;
 import Game.Objects.PacmanObject;
 import Interfaces.ICommonMazeObjectView;
 import javafx.animation.*;

@@ -1,4 +1,4 @@
-package ConstantsEnums;
+package Constants;
 
 public class Constants {
     /**

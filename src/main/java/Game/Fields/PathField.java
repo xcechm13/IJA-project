@@ -1,6 +1,6 @@
 package Game.Fields;
 
-import ConstantsEnums.Direction;
+import Enums.Direction;
 import Game.Objects.GhostObject;
 import Game.Objects.KeyObject;
 import Game.Objects.PacmanObject;

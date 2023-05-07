@@ -1,6 +1,6 @@
 package Game.Objects;
 
-import ConstantsEnums.Direction;
+import Enums.Direction;
 import Game.Fields.PathField;
 import Game.Game;
 import Game.Records.Point;

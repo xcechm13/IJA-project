@@ -1,7 +1,6 @@
-package ConstantsEnums;
+package Constants;
 
-import ConstantsEnums.Constants;
-import ConstantsEnums.FieldNeighbour;
+import Enums.FieldNeighbour;
 
 /**
  * Textures of Walls
