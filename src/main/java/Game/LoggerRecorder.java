@@ -113,19 +113,19 @@ public class LoggerRecorder implements Runnable{
                                     writer.print(" " + ((PacmanObject) o).GetLives());
                                     writer.print(" " + ((PacmanObject) o).GetSteps());
                                     Direction buff = ((PacmanObject) o).GetDirection();
-                                    String PacmanDirection = "pacman_up_closed.png";
+                                    String PacmanDirection = Constants.PacmanSource[0];
                                     switch (buff) {
                                         case Up -> {
-                                            PacmanDirection = "pacman_up_opened.png";
+                                            PacmanDirection = Constants.PacmanSource[4];
                                         }
                                         case Down -> {
-                                            PacmanDirection = "pacman_down_opened.png";
+                                            PacmanDirection = Constants.PacmanSource[5];
                                         }
                                         case Left -> {
-                                            PacmanDirection = "pacman_left_opened.png";
+                                            PacmanDirection = Constants.PacmanSource[6];
                                         }
                                         case Right -> {
-                                            PacmanDirection = "pacman_right_opened.png";
+                                            PacmanDirection = Constants.PacmanSource[7];
                                         }
                                     }
                                     writer.print(" " + PacmanDirection);

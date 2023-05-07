@@ -297,7 +297,7 @@ public class Game extends Application {
         commonMenuVbox.setPadding(new Insets(10, 0, 0, 0));
         commonMenuVbox.setAlignment(Pos.TOP_CENTER);
 
-        ImageView Logo = new ImageView(new Image("pacman_logo.png"));
+        ImageView Logo = new ImageView(new Image(Constants.PacmanLogoSource));
         Logo.setFitWidth(scene.getWidth() * 0.5);
         Logo.setFitHeight(scene.getWidth() * 0.5 * (1.0 / 3.0));
 
@@ -357,11 +357,11 @@ public class Game extends Application {
         menuGhostsImages.setMaxHeight(50);
         menuGhostsImages.setAlignment(Pos.CENTER);
         menuGhostsImages.setSpacing(15);
-        ImageView pacman = new ImageView(new Image("pacman_right_opened.png"));
-        ImageView redGhost = new ImageView(new Image("ghost_red.png"));
-        ImageView blueGhost = new ImageView(new Image("ghost_blue.png"));
-        ImageView yellowGhost = new ImageView(new Image("ghost_yellow.png"));
-        ImageView pinkGhost = new ImageView(new Image("ghost_pink.png"));
+        ImageView pacman = new ImageView(new Image(Constants.PacmanSource[7]));
+        ImageView redGhost = new ImageView(new Image(Constants.GhostSource[0]));
+        ImageView blueGhost = new ImageView(new Image(Constants.GhostSource[3]));
+        ImageView yellowGhost = new ImageView(new Image(Constants.GhostSource[1]));
+        ImageView pinkGhost = new ImageView(new Image(Constants.GhostSource[2]));
         pacman.setFitHeight(30);
         pacman.setFitWidth(30);
         redGhost.setFitHeight(30);
@@ -589,7 +589,7 @@ public class Game extends Application {
         topGameMenu.getChildren().add(goToMenu);
         topGameMenu.setAlignment(goToMenu, Pos.CENTER_RIGHT);
 
-        playPause = new ImageView(new Image("pause.png"));
+        playPause = new ImageView(new Image(Constants.PauseSource));
         playPause.setFitHeight(25);
         playPause.setFitWidth(25);
         playPause.setCursor(Cursor.HAND);
@@ -606,9 +606,9 @@ public class Game extends Application {
 
         bottomGameMenu = new HBox();
         bottomGameMenu.setMaxHeight(0.075 * scene.getHeight());
-        ImageView lives1 = new ImageView(new Image("pacman_right_opened.png"));
-        ImageView lives2 = new ImageView(new Image("pacman_right_opened.png"));
-        ImageView lives3 = new ImageView(new Image("pacman_right_opened.png"));
+        ImageView lives1 = new ImageView(new Image(Constants.PacmanSource[7]));
+        ImageView lives2 = new ImageView(new Image(Constants.PacmanSource[7]));
+        ImageView lives3 = new ImageView(new Image(Constants.PacmanSource[7]));
         lives1.setFitHeight(25);
         lives1.setFitWidth(25);
         lives2.setFitHeight(25);
@@ -705,7 +705,7 @@ public class Game extends Application {
         {
             gameStopped = false;
             topGameMenu.getChildren().remove(playPause);
-            playPause = new ImageView(new Image("pause.png"));
+            playPause = new ImageView(new Image(Constants.PauseSource));
             playPause.setFitHeight(25);
             playPause.setFitWidth(25);
             playPause.setCursor(Cursor.HAND);
@@ -725,7 +725,7 @@ public class Game extends Application {
         {
             gameStopped = true;
             topGameMenu.getChildren().remove(playPause);
-            playPause = new ImageView(new Image("play.png"));
+            playPause = new ImageView(new Image(Constants.PlaySource));
             playPause.setFitHeight(25);
             playPause.setFitWidth(25);
             playPause.setCursor(Cursor.HAND);
@@ -844,7 +844,7 @@ public class Game extends Application {
 
 
 
-        ImageView playBack = new ImageView(new Image("play_back.png"));
+        ImageView playBack = new ImageView(new Image(Constants.PlayBackSource));
         playBack.setFitHeight(25);
         playBack.setFitWidth(50);
         playBack.setCursor(Cursor.HAND);
@@ -856,7 +856,7 @@ public class Game extends Application {
             }
         });
 
-        ImageView stepBack = new ImageView(new Image("step_back.png"));
+        ImageView stepBack = new ImageView(new Image(Constants.StepBackSource));
         stepBack.setFitHeight(25);
         stepBack.setFitWidth(38);
         stepBack.setCursor(Cursor.HAND);
@@ -868,7 +868,7 @@ public class Game extends Application {
             }
         });
 
-        playPause = new ImageView(new Image("play.png"));
+        playPause = new ImageView(new Image(Constants.PlaySource));
         playPause.setFitHeight(25);
         playPause.setFitWidth(25);
         playPause.setCursor(Cursor.HAND);
@@ -880,7 +880,7 @@ public class Game extends Application {
             }
         });
 
-        ImageView stepForward = new ImageView(new Image("step_forward.png"));
+        ImageView stepForward = new ImageView(new Image(Constants.StepForwardSource));
         stepForward.setFitHeight(25);
         stepForward.setFitWidth(38);
         stepForward.setCursor(Cursor.HAND);
@@ -892,7 +892,7 @@ public class Game extends Application {
             }
         });
 
-        ImageView playForward = new ImageView(new Image("play_forward.png"));
+        ImageView playForward = new ImageView(new Image(Constants.PlayForwardSource));
         playForward.setFitHeight(25);
         playForward.setFitWidth(50);
         playForward.setCursor(Cursor.HAND);

@@ -1,5 +1,6 @@
 package Game;
 
+import Constants.Constants;
 import Game.Records.LoggerResult;
 import Game.Views.*;
 import Interfaces.ICommonMazeObjectView;
@@ -175,7 +176,7 @@ public class LoggerPlayer implements Runnable{
         {
             for(int i=0; i<livesToUpdate; i++)
             {
-                ImageView live = new ImageView(new Image("pacman_right_opened.png"));
+                ImageView live = new ImageView(new Image(Constants.PacmanSource[7]));
                 live.setFitHeight(25);
                 live.setFitWidth(25);
                 livesView.getChildren().add(live);

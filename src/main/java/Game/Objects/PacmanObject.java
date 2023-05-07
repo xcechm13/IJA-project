@@ -21,25 +21,60 @@ import static java.lang.Thread.sleep;
  */
 public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
 
-    private int row;
-    private int col;
+    /**
+     * row of pacman
+     */
+    int row;
+    /**
+     * column of pacman
+     */
+    int col;
     /**
      * layout
      */
     private GridPane maze;
+    /**
+     * number of lives
+     */
     private int lives;
+    /**
+     * number of keys found
+     */
     private int foundKeys;
+    /**
+     * number of all keys
+     */
     private int totalKeys;
+    /**
+     * numbef of steps
+     */
     private int steps;
     /**
      * reference to view
      */
     private PacmanView pacmanView;
+    /**
+     * actual field
+     */
     private PathField actField;
+    /**
+     * posible next field
+     */
     private PathField newField;
+    /**
+     * pathfield where pacman started
+     */
     private PathField startingField;
+    /**
+     * scene
+     */
     private Scene scene;
+    /**
+     * is pacman moving
+     */
     private boolean Moving = true;
+
+    //TODO
     private boolean GotoFieldActive = false;
     private int GotoFieldRow = -1;
     private int GotoFieldCol = -1;
@@ -51,11 +86,29 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
      *  fields where pacman has already been
      */
     List<PathField> visited = new ArrayList<>();
+    /**
+     * actual direction
+     */
     Direction actDirection;
+    /**
+     * next direction
+     */
     Direction reqDirection;
+    /**
+     * randomize
+     */
     Random random;
+    /**
+     * game
+     */
     Game game;
+    /**
+     * pacman stopped
+     */
     private volatile boolean isStopped = false;
+    /**
+     * path index
+     */
     int pathIndex = 0;
 
     /**

@@ -20,6 +20,17 @@ public class Constants {
     public static final String KeySource = "key.png";
     public static final String HomeSource = "home.png";
     public static final String TargetSource = "target.png";
+    public static final String PauseSource = "pause.png";
+    public static final String PlaySource = "play.png";
+    public static final String PlayBackSource = "play_back.png";
+    public static final String StepBackSource = "step_back.png";
+    public static final String StepForwardSource = "step_forward.png";
+    public static final String PlayForwardSource = "play_forward.png";
+    public static final String PacmanLogoSource = "pacman_logo.png";
+
+
+
+
     /**
      * speed of pacman ( X seconds to move across one field)
      */
