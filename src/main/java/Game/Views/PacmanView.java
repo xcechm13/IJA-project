@@ -11,32 +11,71 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.util.Duration;
 
-import java.util.Random;
 import java.util.Observable;
 import static java.lang.Math.min;
-
+/**
+ * Class for PacmanView
+ */
 public class PacmanView extends Observable implements ICommonMazeObjectView {
 
+    /**
+     * textures in ImageView
+     */
     private ImageView imageView;
+    /**
+     * layout
+     */
     private GridPane maze;
+    /**
+     * PacmanObject
+     */
     private PacmanObject pacmanObject;
+    /**
+     * row of object
+     */
     private int row;
+    /**
+     * column of object
+     */
     private int col;
+    /**
+     * maze height
+     */
     private double height;
+    /**
+     * maze width
+     */
     private double width;
-    private Random random;
+    /**
+     * animation
+     */
     private Timeline timeline;
+    /**
+     * movement direction
+     */
     private Direction actDirection;
     private boolean stopped;
+    /**
+     * pacman direction (image source)
+     */
     private String imageSource;
 
+    /**
+     * Constructor
+     * @param maze maze layout
+     * @param row row of object
+     * @param col column of object
+     * @param height maze height
+     * @param width maze width
+     * @param object PacmanObject
+     * @param ImageSource pacman direction (image source)
+     */
     public PacmanView(GridPane maze, int row, int col, double height, double width, PacmanObject object, String ImageSource) {
         this.maze = maze;
         this.row = row;
         this.col = col;
         this.height = height;
         this.width = width;
-        this.random = new Random();
         this.pacmanObject = object;
         this.stopped = false;
         this.imageSource = ImageSource;
@@ -45,6 +84,11 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
             this.addObserver(object);
     }
 
+    /**
+     * Update dimensions of object
+     * @param height maze height
+     * @param width maze width
+     */
     @Override
     public void SetFieldSize(double height, double width)
     {
@@ -54,6 +98,10 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
         imageView.setFitHeight(min(width, height));
     }
 
+    /**
+     * Helps with "drawing" the object
+     * @return textures of object
+     */
     @Override
     public ImageView CreateView()
     {
@@ -73,6 +121,9 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
         return imageView;
     }
 
+    /**
+     * Remove object (not visible)
+     */
     @Override
     public void RemoveView()
     {
@@ -83,6 +134,10 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
             timeline.stop();
     }
 
+    /**
+     * Ghost is moving from one field to another
+     * @param direction direction where he should move
+     */
     public void AnimatedMove(Direction direction)
     {
         if(stopped) return;
@@ -149,6 +204,9 @@ public class PacmanView extends Observable implements ICommonMazeObjectView {
         timeline.play();
     }
 
+    /**
+     * finish the movement animation
+     */
     private void AnimationCompleted()
     {
         if(stopped) return;

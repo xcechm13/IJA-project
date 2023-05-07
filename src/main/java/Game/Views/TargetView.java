@@ -7,20 +7,46 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
-import java.util.Random;
-
 import static java.lang.Math.min;
 
+/**
+ * Class for TargetView
+ */
 public class TargetView implements ICommonMazeObjectView {
 
+    /**
+     * textures in ImageView
+     */
     private ImageView imageView;
+    /**
+     * layout
+     */
     private GridPane maze;
+    /**
+     * row of object
+     */
     private int row;
+    /**
+     * column of object
+     */
     private int col;
+    /**
+     * height of maze
+     */
     private double height;
+    /**
+     * width of maze
+     */
     private double width;
-    private double commonObjectSize;
 
+    /**
+     * Constructor
+     * @param maze maze layout
+     * @param row row of object
+     * @param col column of object
+     * @param height height of maze
+     * @param width width of maze
+     */
     public TargetView(GridPane maze, int row, int col, double height, double width)
     {
         this.maze = maze;
@@ -31,6 +57,11 @@ public class TargetView implements ICommonMazeObjectView {
         this.imageView = CreateView();
     }
 
+    /**
+     * Update dimensions of object
+     * @param height maze height
+     * @param width maze width
+     */
     @Override
     public void SetFieldSize(double height, double width)
     {
@@ -40,7 +71,10 @@ public class TargetView implements ICommonMazeObjectView {
         imageView.setFitHeight(min(width, height));
     }
 
-
+    /**
+     * Helps with "drawing" the object
+     * @return textures of object
+     */
     @Override
     public ImageView CreateView()
     {
@@ -59,6 +93,9 @@ public class TargetView implements ICommonMazeObjectView {
         return imageView;
     }
 
+    /**
+     * remove the object (not visible)
+     */
     @Override
     public void RemoveView()
     {

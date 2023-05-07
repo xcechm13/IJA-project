@@ -11,15 +11,35 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.List;
 
+/**
+ * Class for Pathfield
+ */
 public class PathField extends Observable implements ICommonField {
 
+    /**
+     * row in maze
+     */
     public int row;
+    /**
+     * column in maze
+     */
     public int col;
+    /**
+     * whole maze (2d array)
+     */
     private ICommonField[][] maze;
 
+    /**
+     * MazeObjects inside this Pathfield
+     */
     List<ICommonMazeObject> MazeObjects;
 
-
+    /**
+     * Contructor
+     * @param row row of field
+     * @param col column of field
+     * @param maze whole maze
+     */
     public PathField(int row, int col, ICommonField[][] maze)
     {
         this.row = row;
@@ -28,18 +48,30 @@ public class PathField extends Observable implements ICommonField {
         MazeObjects = new ArrayList<>();
     }
 
+    /**
+     * check if pathfield does have any objects
+     * @return true if empty
+     */
     @Override
     public boolean IsEmpty()
     {
         return MazeObjects.size() == 0;
     }
 
+    /**
+     * Find all MazeObjects in Pathfield
+     * @return MazeObjects
+     */
     @Override
     public List<ICommonMazeObject> GetMazeObjects()
     {
         return MazeObjects;
     }
 
+    /**
+     * Put object inside Field
+     * @param object that you want to put inside the field
+     */
     @Override
     public void Put(ICommonMazeObject object)
     {
@@ -57,6 +89,7 @@ public class PathField extends Observable implements ICommonField {
 
                 for (ICommonMazeObject o: MazeObjects)
                 {
+                    //Pacman takes key
                     if(o.IsKey())
                     {
                         Remove(o);
@@ -64,10 +97,10 @@ public class PathField extends Observable implements ICommonField {
                         ((PacmanObject) object).FindKey();
                     }
 
+                    //Pacman wins
                     if(o.IsTarget() && ((PacmanObject) object).AllKeysFound())
                     {
                         ((PacmanObject) object).PacmanOnTarget();
-                        System.out.println("VYHRAL JSI");
                     }
                 }
 
@@ -83,6 +116,10 @@ public class PathField extends Observable implements ICommonField {
         }
     }
 
+    /**
+     * remove object from field
+     * @param object that you want to remove from this field
+     */
     @Override
     public void Remove(ICommonMazeObject object)
     {
@@ -105,12 +142,21 @@ public class PathField extends Observable implements ICommonField {
         }
     }
 
+    /**
+     * check if field is pathfield/wallfield
+     * @return true if field is Pathfield
+     */
     @Override
     public boolean IsPathField()
     {
         return true;
     }
 
+    /**
+     * Get field next to this field
+     * @param direction field on which side
+     * @return field in the direction/ null incase of error
+     */
     @Override
     public ICommonField NextField(Direction direction)
     {
@@ -137,6 +183,11 @@ public class PathField extends Observable implements ICommonField {
         }
     }
 
+    /**
+     * check if object is in field
+     * @param object searched MazeObject
+     * @return true if object is in the field
+     */
     @Override
     public boolean Contains(ICommonMazeObject object) {
         for (int i = 0; i < MazeObjects.size(); i++)

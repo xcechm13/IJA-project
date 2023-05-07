@@ -16,16 +16,24 @@ import java.util.*;
 
 import static java.lang.Math.max;
 import static java.lang.Thread.sleep;
-
+/**
+ * class for PacmanObject
+ */
 public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
 
     private int row;
     private int col;
+    /**
+     * layout
+     */
     private GridPane maze;
     private int lives;
     private int foundKeys;
     private int totalKeys;
     private int steps;
+    /**
+     * reference to view
+     */
     private PacmanView pacmanView;
     private PathField actField;
     private PathField newField;
@@ -35,7 +43,13 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
     private boolean GotoFieldActive = false;
     private int GotoFieldRow = -1;
     private int GotoFieldCol = -1;
+    /**
+     * next moves if going to certain field
+     */
     List<Direction> path;
+    /**
+     *  fields where pacman has already been
+     */
     List<PathField> visited = new ArrayList<>();
     Direction actDirection;
     Direction reqDirection;
@@ -44,6 +58,21 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
     private volatile boolean isStopped = false;
     int pathIndex = 0;
 
+    /**
+     * Constructor
+     * @param maze layout
+     * @param row row of object
+     * @param col columns of object
+     * @param lives starting lives
+     * @param totalKeys starting number of keys
+     * @param foundKeys number of keys found
+     * @param steps number of steps
+     * @param height maze height
+     * @param width maze width
+     * @param field Pathfield where to put pacman
+     * @param scene scene
+     * @param game game
+     */
     public PacmanObject(GridPane maze, int row, int col, int lives, int totalKeys, int foundKeys, int steps, double height, double width, ICommonField field, Scene scene, Game game)
     {
         this.row = row;
@@ -65,58 +94,98 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         CrateControlHandlers();
     }
 
+    /**
+     * start pacman thread
+     */
     public void run()
     {
         isStopped = false;
         Move();
     }
 
+    /**
+     * stop pacman thread
+     */
     public void stop()
     {
         isStopped = true;
     }
 
+    /**
+     * check if object is pacman
+     * @return true
+     */
     @Override
     public boolean IsPacman()
     {
         return true;
     }
 
+    /**
+     * check if object is ghost
+     * @return false
+     */
     @Override
     public boolean IsGhost()
     {
         return false;
     }
 
+    /**
+     * check if object is key
+     * @return false
+     */
     @Override
     public boolean IsKey()
     {
         return false;
     }
 
+    /**
+     * check if object is target
+     * @return false
+     */
     @Override
     public boolean IsTarget()
     {
         return false;
     }
 
+    /**
+     * check if object is home
+     * @return false
+     */
     @Override
     public boolean IsHome() {
         return false;
     }
 
+    /**
+     * Cannot use in this class
+     * @return error
+     */
     @Override
     public ICommonField GetField()
     {
         return actField;
     }
 
+    /**
+     * Update dimensions of object
+     * @param height height of maze
+     * @param width width of maze
+     */
     @Override
     public void SetFieldSize(double height, double width)
     {
         pacmanView.SetFieldSize(height, width);
     }
 
+    /**
+     * check if Field in direction is Pathfield
+     * @param direction to move
+     * @return true if field is pathfield
+     */
     public boolean CanMove(Direction direction)
     {
         if(isStopped) return false;
@@ -130,31 +199,53 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         return false;
     }
 
+    /**
+     * get actual lives of pacman
+     * @return lives
+     */
     public int GetLives()
     {
         return lives;
     }
 
+    /**
+     * get actual steps of pacman
+     * @return steps
+     */
     public int GetSteps()
     {
         return steps;
     }
 
+    /**
+     * get actual direction of pacman
+     * @return actual direction
+     */
     public Direction GetDirection()
     {
         return actDirection;
     }
 
+    /**
+     * one key was found
+     */
     public void FindKey()
     {
         foundKeys++;
     }
 
+    /**
+     * Pacman get to the target with all the keys
+     */
     public void PacmanOnTarget()
     {
         game.PacmanWin();
     }
 
+    /**
+     * every key has been taken
+     * @return
+     */
     public boolean AllKeysFound()
     {
         if (foundKeys == totalKeys)
@@ -164,6 +255,10 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         return false;
     }
 
+    /**
+     * Move pacman (called when pacman thread is started)
+     * @return true if pacman has moved
+     */
     public boolean Move()
     {
         if(CanMove(actDirection))
@@ -178,9 +273,16 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         return false;
     }
 
+    /**
+     * Called when pacman moves somewhere or ghost stepped on field with pacman
+     * @param o     the observable object.
+     * @param arg   an argument passed to the {@code notifyObservers}
+     *                 method.
+     */
     @Override
     public void update(Observable o, Object arg) {
 
+        // Check if pacman meets ghost
         if(o instanceof PathField)
         {
             boolean ghostOnField = false;
@@ -196,22 +298,20 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
 
             if(isStopped || (actField.row == startingField.row && actField.col == startingField.col)) return;
             lives--;
-            System.out.println("pocet zivotu: " + lives);
             pacmanView.RemoveView();
             isStopped = true;
-            //pacmanView = null;
             actField.Remove(this);
             if(newField != null)
                 newField.Remove(this);
             startingField.Put(this);
             actField = startingField;
             try {
-                //startingField.Remove(this);
                 game.PacmanDead(lives, totalKeys, foundKeys, steps);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
+        // movement of ghost
         else
         {
             actField.Remove(this);
@@ -258,6 +358,9 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         }
     }
 
+    /**
+     * key bindings
+     */
     private void CrateControlHandlers()
     {
         scene.setOnKeyPressed(e -> {
@@ -287,9 +390,8 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
 
 
         maze.setOnMouseClicked(e -> {
-            System.out.println("here");
             Node clickedNode = e.getPickResult().getIntersectedNode();
-            // kliklo se na pathfield?
+            // was clicked on pathfield
             if(clickedNode.getParent().getParent().getParent() == null)
             {
                 Integer columnIndex = maze.getColumnIndex(clickedNode);
@@ -299,11 +401,19 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         });
     }
 
+    /**
+     * get random direction
+     * @return direction
+     */
     private Direction GetRandomDirection()
     {
         return Direction.values()[random.nextInt(4)];
     }
 
+    /**
+     * pacman has changed movement (keybord)
+     * @param direction direction pressed
+     */
     private void ChangeCurrentDirection(Direction direction)
     {
         GotoFieldActive = false;
@@ -322,6 +432,11 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         }
     }
 
+    /**
+     * go to selected location
+     * @param row row of where to go
+     * @param col column of where to go
+     */
     private void GoToField(int row, int col)
     {
         var result = findPath(row, col);
@@ -348,11 +463,9 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
                 pacmanView.AnimatedMove(actDirection);
             }
         }
-        System.out.println("Najdi cestu z [" + actField.row + "," + actField.col + "] z " + "[" + row + "," + col + "]");
-        //System.out.println("HERE:" + findPath(row, col).get(0));
-
     }
 
+    //TODO
     private ArrayList<Point> findPath(int targetRow, int targetCol)
     {
         int maxDeep = 1;
@@ -373,6 +486,7 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         }
     }
 
+    //TODO
     private ArrayList<Point> DLS(PathField field, int targetRow, int targetCol, int maxDeep)
     {
         if(field == null || maxDeep == 0)
@@ -409,6 +523,7 @@ public class PacmanObject implements ICommonMazeObject, Observer, Runnable {
         return null;
     }
 
+    //TODO
     public static List<Direction> PointsToDirections(List<Point> points) {
         List<Direction> directions = new ArrayList<>();
 

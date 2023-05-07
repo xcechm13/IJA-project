@@ -3,6 +3,9 @@ package ConstantsEnums;
 import ConstantsEnums.Constants;
 import ConstantsEnums.FieldNeighbour;
 
+/**
+ * Textures of Walls
+ */
 public class FieldPixels {
     public static boolean[][] CreateField (FieldNeighbour fieldNeighbour)
     {

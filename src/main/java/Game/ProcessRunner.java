@@ -6,15 +6,33 @@ import Game.Objects.PacmanObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class that takes care of threads
+ */
 public class ProcessRunner extends Thread{
 
+    /**
+     * all ghosts that are moving as threads
+     */
     private List<Thread> ghostThreads;
+    /**
+     * all ghosts that are moving
+     */
     private List<GhostObject> ghostObjects;
+    /**
+     * thread of pacman
+     */
     private Thread pacmanThread;
     private PacmanObject pacmanObject;
+    /**
+     * thread that saves logs
+     */
     private Thread recorderThread;
     private LoggerRecorder loggerRecorder;
 
+    /**
+     * Constructor
+     */
     public ProcessRunner()
     {
         ghostThreads = new ArrayList<>();
@@ -39,6 +57,9 @@ public class ProcessRunner extends Thread{
         pacmanObject = o;
     }
 
+    /**
+     * set all threads to null
+     */
     public void Clear()
     {
         pacmanThread = null;
@@ -46,6 +67,9 @@ public class ProcessRunner extends Thread{
         ghostThreads = new ArrayList<>();
     }
 
+    /**
+     * starts all ghost movement one by one (delay in case of falling)
+     */
     public void runGhosts(){
         for (Thread t : ghostThreads) {
             try {
@@ -56,6 +80,9 @@ public class ProcessRunner extends Thread{
         }
     }
 
+    /**
+     * starts pacman movement
+     */
     public void runPacman()
     {
         try {
@@ -64,6 +91,9 @@ public class ProcessRunner extends Thread{
         } catch (InterruptedException e) { }
     }
 
+    /**
+     * starts saving logs
+     */
     public void runRecorder()
     {
         try {
@@ -72,11 +102,17 @@ public class ProcessRunner extends Thread{
         } catch (InterruptedException e) { }
     }
 
+    /**
+     * stop logging
+     */
     public void stopRecorder()
     {
         loggerRecorder.stop();
     }
 
+    /**
+     * stop pacman and ghosts
+     */
     public void stopAllObjects()
     {
         for(GhostObject t : ghostObjects)
@@ -86,6 +122,9 @@ public class ProcessRunner extends Thread{
         pacmanObject.stop();
     }
 
+    /**
+     * start ghosts and pacman
+     */
     public void runAllObjects()
     {
         for(GhostObject t : ghostObjects)

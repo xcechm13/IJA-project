@@ -19,19 +19,63 @@ import java.util.Random;
 
 import static java.lang.Math.min;
 
+/**
+ * Class for GhostView
+ */
+
 public class GhostView extends Observable implements ICommonMazeObjectView {
 
+    /**
+     * textures in ImageView
+     */
     private ImageView imageView;
+    /**
+     * layout
+     */
     private GridPane maze;
+    /**
+     * row of object
+     */
     private int row;
+    /**
+     * column of object
+     */
     private int col;
+    /**
+     * height of maze
+     */
     private double height;
+    /**
+     * width of maze
+     */
     private double width;
+    /**
+     * randomize ghost color
+     */
     private Random random;
+    /**
+     * animation
+     */
     private Timeline timeline;
+    /**
+     * ghost movement direction
+     */
     private Direction actDirection;
+    /**
+     * ghost color (image source)
+     */
     private String imageSource;
 
+    /**
+     * Constructor
+     * @param maze layout maze
+     * @param row row of object
+     * @param col column of object
+     * @param height maze height
+     * @param width maze width
+     * @param object GhostObject
+     * @param ImageSource ghost color
+     */
     public GhostView(GridPane maze, int row, int col, double height, double width, GhostObject object, String ImageSource)
     {
         this.maze = maze;
@@ -46,6 +90,11 @@ public class GhostView extends Observable implements ICommonMazeObjectView {
             this.addObserver(object);
     }
 
+    /**
+     * Update dimensions of object
+     * @param height maze height
+     * @param width maze width
+     */
     @Override
     public void SetFieldSize(double height, double width)
     {
@@ -55,6 +104,10 @@ public class GhostView extends Observable implements ICommonMazeObjectView {
         imageView.setFitHeight(min(width, height));
     }
 
+    /**
+     * Helps with "drawing" the object
+     * @return textures of object
+     */
     @Override
     public synchronized ImageView CreateView()
     {
@@ -74,16 +127,27 @@ public class GhostView extends Observable implements ICommonMazeObjectView {
         return imageView;
     }
 
+    /**
+     * remove the object (not visible)
+     */
     @Override
     public void RemoveView() {
         maze.getChildren().remove(imageView);
     }
 
+    /**
+     * gets color of ghost
+     * @return ghost color
+     */
     public String GetGhostColor()
     {
         return imageSource;
     }
 
+    /**
+     * Ghost is moving from one field to another
+     * @param direction direction where he should move
+     */
     public void AnimatedMove(Direction direction)
     {
         actDirection = direction;
@@ -113,6 +177,9 @@ public class GhostView extends Observable implements ICommonMazeObjectView {
         timeline.play();
     }
 
+    /**
+     * finish the movement animation
+     */
     private synchronized void AnimationCompleted()
     {
         switch (actDirection) {

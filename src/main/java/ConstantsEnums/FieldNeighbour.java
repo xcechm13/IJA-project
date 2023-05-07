@@ -1,5 +1,8 @@
 package ConstantsEnums;
 
+/**
+ * Different MazeWalls
+ */
 public enum FieldNeighbour {
     NoNeighbour,
     RightNeighbour,
