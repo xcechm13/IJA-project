@@ -643,41 +643,41 @@ public class Game extends Application {
             {
                 switch (fields[r][c])
                 {
-                    case "T" -> {
-                        var object = new TargetObject(gameGridPane, r, c, windowHeight / rows, windowWidth / cols);
+                    case "T":
+                        var tObject = new TargetObject(gameGridPane, r, c, windowHeight / rows, windowWidth / cols);
                         maze[r][c] = new PathField(r,c, maze);
-                        maze[r][c].Put(object);
-                    }
-                    case "G" -> {
+                        maze[r][c].Put(tObject);
+                        break;
+                    case "G":
                         maze[r][c] = new PathField(r,c, maze);
-                        var object = new GhostObject(gameGridPane, r, c, windowHeight / rows, windowWidth / cols, maze[r][c]);
-                        var thread = new Thread(object);
-                        processRunner.addGhost(thread, object);
-                        maze[r][c].Put(object);
-                    }
-                    case "K" -> {
-                        var object = new KeyObject(gameGridPane, r, c, windowHeight / rows, windowWidth / cols);
+                        var gObject = new GhostObject(gameGridPane, r, c, windowHeight / rows, windowWidth / cols, maze[r][c]);
+                        var gThread = new Thread(gObject);
+                        processRunner.addGhost(gThread, gObject);
+                        maze[r][c].Put(gObject);
+                        break;
+                    case "K":
+                        var kObject = new KeyObject(gameGridPane, r, c, windowHeight / rows, windowWidth / cols);
                         maze[r][c] = new PathField(r,c, maze);
-                        maze[r][c].Put(object);
-                    }
-                    case "S" -> {
+                        maze[r][c].Put(kObject);
+                        break;
+                    case "S":
                         maze[r][c] = new PathField(r,c, maze);
-                        var object = new PacmanObject(gameGridPane, r, c, 3, keys, 0, 0, windowHeight / rows, windowWidth / cols, maze[r][c], scene, this);
-                        var thread = new Thread(object);
-                        processRunner.setPacman(thread, object);
-                        maze[r][c].Put(object);
+                        var pObject = new PacmanObject(gameGridPane, r, c, 3, keys, 0, 0, windowHeight / rows, windowWidth / cols, maze[r][c], scene, this);
+                        var pThread = new Thread(pObject);
+                        processRunner.setPacman(pThread, pObject);
+                        maze[r][c].Put(pObject);
                         maze[r][c].Put(new HomeObject(gameGridPane, r, c, windowHeight / rows, windowWidth / cols));
                         pacmanStartingRow = r;
                         pacmanStartingCol = c;
                         fieldHeight = windowHeight / rows;
                         fieldWidth = windowWidth / cols;
-                    }
-                    case "." -> {
+                        break;
+                    case ".":
                         maze[r][c] = new PathField(r,c, maze);
-                    }
-                    case "X" -> {
+                        break;
+                    case "X":
                         maze[r][c] = new WallField(r,c, maze);
-                    }
+                        break;
                 }
             }
         }
